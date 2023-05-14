@@ -217,5 +217,6 @@ class Floor extends Rectangle{
 		return appear_time;
 	}
 }
-
+///////
+///
 
