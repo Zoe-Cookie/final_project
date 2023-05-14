@@ -33,7 +33,7 @@ public class project extends Application{
 		pane.getChildren().add(iv_ceiling);
 		
 		//create circle
-		Circle c=new Circle(100,50,10);
+		Circle c=new Circle(100,200,10);
 		c.setStroke(Color.BLACK);
 		c.setFill(Color.WHITE);
 		c.setCenterX(c.getCenterX()+10);
@@ -68,7 +68,7 @@ public class project extends Application{
 		//create n rectangles
 		int n=10;
 		Rectangle [] rs=new Rectangle[n+1];
-		Rectangle start=new Rectangle(80,500d/11,60,10);
+		Rectangle start=new Rectangle(80,210,60,10);
 		start.setFill(Color.BLACK);
 		start.setStroke(Color.BLACK);
 		rs[0]=start;
@@ -150,7 +150,7 @@ public class project extends Application{
 	        } else if (r.getY() >= 0) {
 	        	r.setY(r.getY() - 1);
 	        } else {
-	            r.setX((int) (Math.random() * 420));
+	            r.setX((int) (Math.random() * 320));
 	            r.setY(500);
 	            moveWithRectangle = false;
 	            f.add_time();
@@ -204,7 +204,7 @@ public class project extends Application{
 
 }
 
-//製作角色或許可以繼承圓形?
+
 
 //繼承矩形
 class Floor extends Rectangle{
