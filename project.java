@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package project;
 
 import javafx.animation.KeyFrame;
@@ -7,8 +6,8 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -24,7 +23,7 @@ public class project extends Application{
 		Pane pane=new Pane();
 		
 		//create circle
-		Circle c=new Circle(100,50,25);
+		Circle c=new Circle(100,125,25);
 		c.setStroke(Color.BLACK);
 		c.setFill(Color.WHITE);
 		c.setCenterX(c.getCenterX()+10);
@@ -59,7 +58,7 @@ public class project extends Application{
 		//create n rectangles
 		int n=10;
 		Rectangle [] rs=new Rectangle[n+1];
-		Rectangle start=new Rectangle(80,75,60,10);
+		Rectangle start=new Rectangle(80,150,60,10);
 		start.setFill(Color.BLACK);
 		start.setStroke(Color.BLACK);
 		rs[0]=start;
@@ -89,7 +88,11 @@ public class project extends Application{
 					index=i;
 				}
 			}
-			if(!touchGround) {
+			
+			if(c.getCenterY()>=525 || c.getCenterY()<=c.getRadius() ) {//掉到最下面或碰到頂部失敗
+				//gameOver(pane,c);
+			}
+			else if(!touchGround) {
 				c.setCenterY(c.getCenterY()+0.1);
 			}
 			else {
@@ -118,12 +121,15 @@ public class project extends Application{
 		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
+			Floor f=new Floor();
 			if (c.getCenterX()>=r.getX() && c.getCenterX()<=r.getX()+r.getWidth()
 				&& c.getCenterY()>=r.getY()-c.getRadius() && c.getCenterY()<=r.getY()-c.getRadius()+1) {
 				moveWithRectangle = true;
 	        }
 	        
-	        if (moveWithRectangle) {
+			if(c.getCenterY()>=525 || c.getCenterY()<=c.getRadius() ) {
+				//do nothing 圓掉到最下面或碰到頂部而停止
+			}else if (moveWithRectangle) {
 	            //r.setY(c.getCenterY() - 25);
 	        	r.setY(r.getY() - 10);
 	        	c.setCenterY(c.getCenterY()-10);
@@ -133,14 +139,12 @@ public class project extends Application{
 	            r.setX((int) (Math.random() * 420));
 	            r.setY(500);
 	            moveWithRectangle = false;
+	            f.add_time();
 	        }
-			/*if(r.getY()>=0) {
-				r.setY(r.getY()-10);
+			if(f.getAppearTime()==10){
+				
 			}
-			else {
-				r.setX((int)(Math.random()*420));
-				r.setY(500);
-			}*/
+			
 		});
 		
 		Timeline animation=new Timeline(new
@@ -148,6 +152,7 @@ public class project extends Application{
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.play();
 	}
+	//目前沒用到
 	public static void circleMoveUP(Rectangle r, Circle c) {
 		Line line=new Line(c.getCenterX(),r.getY()-25,c.getCenterX(),0);
 		PathTransition pt=new PathTransition();
@@ -156,121 +161,47 @@ public class project extends Application{
 		pt.setNode(c);
 		pt.play();
 	}
+	//遊戲結束
+	public static void gameOver(Pane pane,Circle c) {
+		//Circle c= new Circle(250,250,25);
+		Rectangle r=new Rectangle(150,150,200,200);
+		r.setFill(Color.BLUE);
+		r.setStroke(Color.BLACK);
+		//pane.getChildren().add(r);
+		Button bt=new Button("play again");
+		pane.getChildren().add(bt);
+		bt.setOnMouseClicked(e->{
+			pane.getChildren().remove(r);
+			c.setCenterX(100);
+			c.setCenterY(50);
+			pane.getChildren().remove(bt);
+		});
+		bt.requestFocus();
+		//pane.getChildren().add(c);
+	}
+	//重新開始
+	public static void restart(Pane pane) {
+		
+		
+	}
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 }
 
+//製作角色或許可以繼承圓形?
 
-
-
-=======
-package project;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
-public class project extends Application{
-	@Override
-	public void start(Stage primaryStage) {
-		//create a pane
-		Pane pane=new Pane();
-		
-		//create circle
-		Circle c=new Circle(100,50,25);
-		c.setStroke(Color.BLACK);
-		c.setFill(Color.WHITE);
-		c.setCenterX(c.getCenterX()+10);
-		
-		//event
-		c.setOnKeyPressed(e->{
-			switch(e.getCode()) {
-			case UP:
-				c.setCenterY(c.getCenterY()-10);
-				break;
-			case DOWN:
-				c.setCenterY(c.getCenterY()+10);
-				break;
-			case RIGHT:
-				//讓圓不超出右側螢幕
-				if(c.getCenterX()<=475) {
-					c.setCenterX(c.getCenterX()+10);
-				}
-				break;
-			case LEFT:
-				//讓圓不超出左側螢幕
-				if(c.getCenterX()>=25) {
-					c.setCenterX(c.getCenterX()-10);
-				}
-				break;
-			default:
-				break;
-			}
-			
-		});
-		
-		//Rectangle r=new Rectangle((int)(Math.random()*420),(int)(Math.random()*400)+80,60,10);//(80,75,60,10)
-		//create n rectangles
-		int n=10;
-		Rectangle [] rs=new Rectangle[n+1];
-		Rectangle start=new Rectangle(80,75,60,10);
-		start.setFill(Color.BLACK);
-		start.setStroke(Color.BLACK);
-		rs[0]=start;
-		pane.getChildren().add(start);
-		for(int i=1;i<n+1;i++) {
-			Rectangle r=new Rectangle((int)(Math.random()*420),(int)(Math.random()*400)+80,60,10);
-			r.setFill(Color.BLACK);
-			r.setStroke(Color.BLACK);
-			rs[i]=r;
-			pane.getChildren().add(r);
-		}
-		//add to pane
-		pane.getChildren().add(c);
-		
-		//create a handler
-		EventHandler <ActionEvent> eventhandler= (e ->{
-			boolean touchGround=false;
-			for(int i=0;i<n+1;i++) {
-			//球碰到地板
-				if((c.getCenterX()>=rs[i].getX() && c.getCenterX()<=rs[i].getX()+rs[i].getWidth())
-					&& c.getCenterY()>=rs[i].getY()-c.getRadius() && c.getCenterY()<=rs[i].getY()-c.getRadius()+10) {
-					touchGround=true;
-				}
-			}
-			if(!touchGround) {
-				c.setCenterY(c.getCenterY()+1);
-			}
-		});
-		//Time line
-		Timeline animation=new Timeline(new
-				KeyFrame(Duration.millis(10),eventhandler));
-		animation.setCycleCount(Timeline.INDEFINITE);
-		animation.play();
-		//add pane to scene and stage
-		Scene scene=new Scene(pane,500,500);
-		primaryStage.setScene(scene);
-		primaryStage.setTitle("Project");
-		primaryStage.show();
-		
-		c.requestFocus();
+//繼承矩形
+class Floor extends Rectangle{
+	private int appear_time=0;
+	
+	public void add_time() {
+		appear_time++;
 	}
-
-	public static void main(String[] args) {
-		launch(args);
+	public int getAppearTime() {
+		return appear_time;
 	}
-
 }
 
->>>>>>> 976fce5f5899291016feff55303e0b555aeb105e
+
