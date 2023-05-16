@@ -10,12 +10,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -31,6 +33,23 @@ public class project extends Application{
 		ImageView iv_ceiling = new ImageView(Ceiling);
 		ImagePattern ip_nails = new ImagePattern(Nails);
 		pane.getChildren().add(iv_ceiling);
+		
+		//遊戲資訊視窗(包括標題，層數和重新開始按鈕，設定每11塊板子一層)
+		Rectangle r_info=new Rectangle(400,0,200,500);
+		r_info.setStroke(Color.GREEN);
+		r_info.setFill(Color.WHITE);
+		Rectangle r_button=new Rectangle(470,400,60,30);
+		r_button.setStroke(Color.GREEN);
+		r_button.setFill(Color.WHITE);
+		Text title=new Text(470,50,"title");
+		Text t_layer=new Text(470,100,"layer: 0");
+		pane.getChildren().addAll(r_info,r_button,title,t_layer);
+		//讓層數資料更新
+		Timeline changeinfo=new Timeline(new
+				KeyFrame(Duration.millis(100),e->{t_layer.setText("layer: "+((Layer.layer/11)+1));}));
+		changeinfo.setCycleCount(Timeline.INDEFINITE);
+		changeinfo.play();
+		
 		
 		//create circle
 		Circle c=new Circle(100,200,10);
@@ -122,7 +141,7 @@ public class project extends Application{
 		animation.play();
 		
 		//add pane to scene and stage
-		Scene scene=new Scene(pane,400,500);
+		Scene scene=new Scene(pane,400+200,500);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Project");
 		primaryStage.show();
@@ -135,7 +154,7 @@ public class project extends Application{
 		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
-			Floor f=new Floor();
+			//Floor f=new Floor();
 			if (c.getCenterX()>=r.getX() && c.getCenterX()<=r.getX()+r.getWidth()
 				&& c.getCenterY()>=r.getY()-c.getRadius() && c.getCenterY()<=r.getY()-c.getRadius()+1) {
 				moveWithRectangle = true;
@@ -153,11 +172,12 @@ public class project extends Application{
 	            r.setX((int) (Math.random() * 320));
 	            r.setY(500);
 	            moveWithRectangle = false;
-	            f.add_time();
+	            Layer.layer++;
+	            //f.add_time();
 	        }
-			if(f.getAppearTime()==10){
+			/*if(f.getAppearTime()==10){
 				
-			}
+			}*/
 			
 		});
 		
@@ -216,6 +236,10 @@ class Floor extends Rectangle{
 	public int getAppearTime() {
 		return appear_time;
 	}
+}
+//類似全域變數，計算層數
+class Layer{
+	static int layer=0;
 }
 
 /////////
