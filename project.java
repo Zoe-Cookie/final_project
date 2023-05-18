@@ -38,12 +38,17 @@ public class project extends Application{
 		Rectangle r_info=new Rectangle(400,0,200,500);
 		r_info.setStroke(Color.GREEN);
 		r_info.setFill(Color.WHITE);
-		Rectangle r_button=new Rectangle(470,400,60,30);
+		Rectangle r_button=new Rectangle(470,400,60,30);//重新開始紐
 		r_button.setStroke(Color.GREEN);
 		r_button.setFill(Color.WHITE);
+		Rectangle r_start=new Rectangle(470,350,60,30);//開始紐
+		r_start.setStroke(Color.BLUE);
+		r_start.setFill(Color.WHITE);
 		Text title=new Text(470,50,"title");
 		Text t_layer=new Text(470,100,"layer: 0");
-		pane.getChildren().addAll(r_info,r_button,title,t_layer);
+		Text t_start=new Text(490,368,"start");
+		Text t_restart=new Text(485,418,"restart");
+		pane.getChildren().addAll(r_info,r_button,r_start,title,t_layer,t_start,t_restart);
 		//讓層數資料更新
 		Timeline changeinfo=new Timeline(new
 				KeyFrame(Duration.millis(100),e->{t_layer.setText("layer: "+((Layer.layer/11)+1));}));
@@ -52,7 +57,7 @@ public class project extends Application{
 		
 		
 		//create circle
-		Circle c=new Circle(100,200,10);
+		Circle c=new Circle(100,2000d/11-10,10);//一開始在第四快板子上
 		c.setStroke(Color.BLACK);
 		c.setFill(Color.WHITE);
 		c.setCenterX(c.getCenterX()+10);
@@ -87,13 +92,17 @@ public class project extends Application{
 		//create n rectangles
 		int n=10;
 		Rectangle [] rs=new Rectangle[n+1];
-		Rectangle start=new Rectangle(80,210,60,10);
+		Rectangle start=new Rectangle(80,500d/11,60,10);//1250d/11 210
 		start.setFill(Color.BLACK);
 		start.setStroke(Color.BLACK);
 		rs[0]=start;
 		pane.getChildren().add(start);
 		for(int i=1;i<n;i++) {
 			Rectangle r=new Rectangle((int)(Math.random()*320),500d/11*(i+1),60,10);//0<=x<=420, 0<=y<=500
+			if(i==3) {//一開始圓在的固定板子
+				r.setX(80);
+			}
+			
 			r.setFill(Color.BLACK);
 			r.setStroke(Color.BLACK);
 			rs[i]=r;
@@ -103,9 +112,29 @@ public class project extends Application{
 		danger.setFill(ip_nails);
 		rs[10] = danger;
 		pane.getChildren().add(danger);
-		for(int i=0;i<n+1;i++) {
-			moveRectangle(rs[i],c);
-		}
+		
+		t_start.setOnMouseClicked(e->{//按到start開始遊戲
+			for(int i=0;i<n+1;i++) {  //連續按會加快速度，不知道為什麼，蠻好玩的，可以試試
+				moveRectangle(rs[i],c);
+			}
+			
+		});
+		
+		t_restart.setOnMouseClicked(e->{//按到restart重新開始，事實上只是圓和板子重擺位子而已
+			c.setCenterX(100);			
+			c.setCenterY(2000d/11-10);
+			for(int i=0;i<n+1;i++) {
+				rs[i].setY(500d/11*(i+1));
+				if(i==3) {
+					rs[i].setX(80);
+				}
+				else {
+					rs[i].setX((int)(Math.random()*320));
+				}
+			}
+			Layer.layer=1;//重設layer為1
+		});
+		
 		//add to pane
 		pane.getChildren().add(c);
 	
