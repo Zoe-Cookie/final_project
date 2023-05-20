@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -22,11 +21,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class project extends Application{
+	
 	@Override
+	
 	public void start(Stage primaryStage) {
 		//create a pane
 		Pane pane=new Pane();
-        
+		
         //天花板尖刺和尖刺板子(還改了整體視窗x變成400、板子減少一個放成尖刺、板子的y間距
 		Image Ceiling = new Image("/project/image/Ceiling.png");
 		Image Nails = new Image("/project/image/Nails.png");
@@ -36,8 +37,7 @@ public class project extends Application{
 		
 		//遊戲資訊視窗(包括標題，層數和重新開始按鈕，設定每11塊板子一層)
 		Rectangle r_info=new Rectangle(400,0,200,500);
-		r_info.setStroke(Color.GREEN);
-		r_info.setFill(Color.WHITE);
+		r_info.setFill(Color.ALICEBLUE);
 		Rectangle r_button=new Rectangle(470,400,60,30);//重新開始紐
 		r_button.setStroke(Color.GREEN);
 		r_button.setFill(Color.WHITE);
@@ -57,44 +57,19 @@ public class project extends Application{
 		
 		
 		//create circle
-		Circle c=new Circle(100,2000d/11-10,10);//一開始在第四快板子上
+		Circle c=new Circle(110,2000d/11-10,10);//一開始在第四快板子上
 		c.setStroke(Color.BLACK);
 		c.setFill(Color.WHITE);
-		c.setCenterX(c.getCenterX()+10);
-		
-		//event
-		c.setOnKeyPressed(e->{
-			switch(e.getCode()) {
-			case UP:
-				c.setCenterY(c.getCenterY()-10);
-				break;
-			case DOWN:
-				c.setCenterY(c.getCenterY()+10);
-				break;
-			case RIGHT:
-				//讓圓不超出右側螢幕
-				if(c.getCenterX()<=375) {
-					c.setCenterX(c.getCenterX()+10);
-				}
-				break;
-			case LEFT:
-				//讓圓不超出左側螢幕
-				if(c.getCenterX()>=25) {
-					c.setCenterX(c.getCenterX()-10);
-				}
-				break;
-			default:
-				break;
-			}
-			
-		});
+		//上下左右改成函數
+		registerKeyboardEventHandler(c);
 		
 		//create n rectangles
 		int n=10;
 		Rectangle [] rs=new Rectangle[n+1];
 		Rectangle start=new Rectangle(80,500d/11,60,10);//1250d/11 210
-		start.setFill(Color.BLACK);
-		start.setStroke(Color.BLACK);
+		Image Normal = new Image("/project/image/Normal.png");
+		ImagePattern ip_normal = new ImagePattern(Normal);
+		start.setFill(ip_normal);
 		rs[0]=start;
 		pane.getChildren().add(start);
 		for(int i=1;i<n;i++) {
@@ -102,9 +77,7 @@ public class project extends Application{
 			if(i==3) {//一開始圓在的固定板子
 				r.setX(80);
 			}
-			
-			r.setFill(Color.BLACK);
-			r.setStroke(Color.BLACK);
+			r.setFill(ip_normal);
 			rs[i]=r;
 			pane.getChildren().add(r);
 		}
@@ -121,7 +94,8 @@ public class project extends Application{
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始，事實上只是圓和板子重擺位子而已
-			c.setCenterX(100);			
+			pane.getChildren().add(c);
+			c.setCenterX(110);			
 			c.setCenterY(2000d/11-10);
 			for(int i=0;i<n+1;i++) {
 				rs[i].setY(500d/11*(i+1));
@@ -133,6 +107,8 @@ public class project extends Application{
 				}
 			}
 			Layer.layer=1;//重設layer為1
+			registerKeyboardEventHandler(c);
+			c.requestFocus();
 		});
 		
 		//add to pane
@@ -152,7 +128,8 @@ public class project extends Application{
 			}
 			
 			if(c.getCenterY()>=525 || c.getCenterY()<=c.getRadius() ) {//掉到最下面或碰到頂部失敗
-				//gameOver(pane,c);
+				pane.getChildren().remove(c);
+//				gameOver(pane,c);
 			}
 			else if(!touchGround) {
 				c.setCenterY(c.getCenterY()+0.1);
@@ -178,8 +155,43 @@ public class project extends Application{
 		
 		
 	}
+	
+	//控制上下左右放進函式
+	public void registerKeyboardEventHandler(Circle c) {
+	    c.setOnKeyPressed(e -> {
+	        switch (e.getCode()) {
+	            case UP:
+	                c.setCenterY(c.getCenterY() - 10);
+	                break;
+	            case DOWN:
+	                c.setCenterY(c.getCenterY() + 10);
+	                break;
+	            case RIGHT:
+	                // Make sure the circle doesn't go beyond the right side of the screen
+	                if (c.getCenterX() <= 375) {
+	                    c.setCenterX(c.getCenterX() + 10);
+	                }
+	                break;
+	            case LEFT:
+	                // Make sure the circle doesn't go beyond the left side of the screen
+	                if (c.getCenterX() >= 25) {
+	                    c.setCenterX(c.getCenterX() - 10);
+	                }
+	                break;
+	            default:
+	                break;
+	        }
+	    });
+	    
+	    Timeline animation=new Timeline(new
+				KeyFrame(Duration.millis(100)));
+		animation.setCycleCount(Timeline.INDEFINITE);
+		animation.play();
+	}
+	
 	//讓板子往上動的函式
 	public static void moveRectangle(Rectangle r, Circle c) {
+		
 		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
@@ -230,7 +242,7 @@ public class project extends Application{
 		Rectangle r=new Rectangle(150,150,200,200);
 		r.setFill(Color.BLUE);
 		r.setStroke(Color.BLACK);
-		//pane.getChildren().add(r);
+		pane.getChildren().add(r);
 		Button bt=new Button("play again");
 		pane.getChildren().add(bt);
 		bt.setOnMouseClicked(e->{
