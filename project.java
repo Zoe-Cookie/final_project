@@ -1,7 +1,6 @@
 package project;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -14,7 +13,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -60,8 +58,8 @@ public class project extends Application{
 		Circle c=new Circle(110,2000d/11-10,10);//一開始在第四快板子上
 		c.setStroke(Color.BLACK);
 		c.setFill(Color.WHITE);
-		//上下左右改成函數
-		registerKeyboardEventHandler(c);
+		
+		
 		
 		//create n rectangles
 		int n=10;
@@ -85,20 +83,43 @@ public class project extends Application{
 		danger.setFill(ip_nails);
 		rs[10] = danger;
 		pane.getChildren().add(danger);
+		/*在3,4,5層數會把指定板子變尖刺*/
+		EventHandler <ActionEvent> thirdhandler= (e ->{
+			//int i = (int)(Math.random()*10);
+			if(Layer.layer>=44 && rs[3].getY()==500) {
+				rs[3].setFill(ip_nails);
+			}
+			else if(Layer.layer>=33 && rs[7].getY()==500) {
+				rs[7].setFill(ip_nails);
+			}
+			else if(Layer.layer>=22 && rs[1].getY()==500) {
+				rs[1].setFill(ip_nails);
+        	}
+		});
+		
+		Timeline difficulties=new Timeline(new KeyFrame(Duration.millis(1),thirdhandler));
+		difficulties.setCycleCount(Timeline.INDEFINITE);
+		difficulties.play();
 		
 		t_start.setOnMouseClicked(e->{//按到start開始遊戲
-			for(int i=0;i<n+1;i++) {  //連續按會加快速度，不知道為什麼，蠻好玩的，可以試試
+			for(int i=0;i<n+1;i++) {  //連續按會加快速度
 				moveRectangle(rs[i],c);
 			}
-			
+			registerKeyboardEventHandler(c);//上下左右改成函數
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始，事實上只是圓和板子重擺位子而已
-			pane.getChildren().add(c);
+			pane.getChildren().add(c);	//須使遊戲進行中不能按restart
 			c.setCenterX(110);			
 			c.setCenterY(2000d/11-10);
 			for(int i=0;i<n+1;i++) {
 				rs[i].setY(500d/11*(i+1));
+				if(i==10) {
+					rs[i].setFill(ip_nails);
+				}
+				else {
+					rs[i].setFill(ip_normal);
+				}
 				if(i==3) {
 					rs[i].setX(80);
 				}
@@ -137,6 +158,8 @@ public class project extends Application{
 			else {
 				c.setCenterY(rs[index].getY() - c.getRadius());
 			}
+			
+			
 		});
 		
 		
@@ -192,7 +215,6 @@ public class project extends Application{
 	//讓板子往上動的函式
 	public static void moveRectangle(Rectangle r, Circle c) {
 		
-		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
 			//Floor f=new Floor();
@@ -210,6 +232,7 @@ public class project extends Application{
 	        } else if (r.getY() >= 0) {
 	        	r.setY(r.getY() - 1);
 	        } else {
+	        	
 	            r.setX((int) (Math.random() * 320));
 	            r.setY(500);
 	            moveWithRectangle = false;
@@ -226,17 +249,14 @@ public class project extends Application{
 				KeyFrame(Duration.millis(20),handler));
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.play();
+		
+		
 	}
 	//目前沒用到
-	public static void circleMoveUP(Rectangle r, Circle c) {
-		Line line=new Line(c.getCenterX(),r.getY()-25,c.getCenterX(),0);
-		PathTransition pt=new PathTransition();
-		pt.setDuration(Duration.millis(1000));
-		pt.setPath(line);
-		pt.setNode(c);
-		pt.play();
+	public static void speedup(Timeline timeline) {
+		timeline.setRate(timeline.getRate()+0.1);
 	}
-	//遊戲結束
+	//遊戲結束(沒用到)
 	public static void gameOver(Pane pane,Circle c) {
 		//Circle c= new Circle(250,250,25);
 		Rectangle r=new Rectangle(150,150,200,200);
@@ -267,7 +287,7 @@ public class project extends Application{
 
 
 
-//繼承矩形
+//繼承矩形(沒用到)
 class Floor extends Rectangle{
 	private int appear_time=0;
 	
