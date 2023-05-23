@@ -108,8 +108,8 @@ public class project extends Application{
 			registerKeyboardEventHandler(c);//上下左右改成函數
 		});
 		
-		t_restart.setOnMouseClicked(e->{//按到restart重新開始，事實上只是圓和板子重擺位子而已
-			pane.getChildren().add(c);	//須使遊戲進行中不能按restart
+		t_restart.setOnMouseClicked(e->{//按到restart重新開始
+			pane.getChildren().add(c);	//遊戲進行中不能按restart
 			c.setCenterX(110);			
 			c.setCenterY(2000d/11-10);
 			for(int i=0;i<n+1;i++) {
@@ -127,7 +127,7 @@ public class project extends Application{
 					rs[i].setX((int)(Math.random()*320));
 				}
 			}
-			Layer.layer=1;//重設layer為1
+			Layer.layer=0;//重設layer為
 			registerKeyboardEventHandler(c);
 			c.requestFocus();
 		});
@@ -151,6 +151,27 @@ public class project extends Application{
 			if(c.getCenterY()>=525 || c.getCenterY()<=c.getRadius() ) {//掉到最下面或碰到頂部失敗
 				pane.getChildren().remove(c);
 //				gameOver(pane,c);
+			}
+			else if(touchGround) {//碰到尖刺球不見但板子仍會繼續移動直到碰到天花板
+				if(rs[10].getFill().equals(ip_nails) && index==10 ) {
+					pane.getChildren().remove(c);
+				}
+				else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
+					pane.getChildren().remove(c);
+					//Heart.number=Heart.number-1;
+					//System.out.println(Heart.number);
+				}
+				else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
+					pane.getChildren().remove(c);
+					//Heart.number=Heart.number-1;
+					//System.out.println(Heart.number);
+				}
+				else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
+					pane.getChildren().remove(c);
+					//Heart.number=Heart.number-1;
+					//System.out.println(Heart.number);
+	        	}
+				
 			}
 			else if(!touchGround) {
 				c.setCenterY(c.getCenterY()+0.1);
@@ -250,11 +271,23 @@ public class project extends Application{
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.play();
 		
+		speedup(animation);
 		
 	}
-	//目前沒用到
+	//板子隨時間加速
 	public static void speedup(Timeline timeline) {
-		timeline.setRate(timeline.getRate()+0.1);
+		double origin_time=timeline.getRate();
+		EventHandler <ActionEvent> speedhandler= (e->{
+			if(Layer.layer==0) {//重新開始後回到原速度
+				timeline.setRate(origin_time);
+			}
+			timeline.setRate(timeline.getRate()+0.001);
+		});
+		
+		Timeline speedUP=new Timeline(new
+				KeyFrame(Duration.millis(10),speedhandler));
+		speedUP.setCycleCount(Timeline.INDEFINITE);
+		speedUP.play();
 	}
 	//遊戲結束(沒用到)
 	public static void gameOver(Pane pane,Circle c) {
@@ -302,6 +335,19 @@ class Floor extends Rectangle{
 class Layer{
 	static int layer=0;
 }
+
+//血條(目前沒用到)
+class Heart{
+	static int number=3;
+	
+	public int getHeartNumber() {
+		return number;
+	}
+	public void getHurt() {
+		number--;
+	}
+}
+
 
 /////////
 //
