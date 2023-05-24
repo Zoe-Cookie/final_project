@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -39,17 +40,22 @@ public class project extends Application{
 		Rectangle r_button=new Rectangle(470,400,60,30);//重新開始紐
 		r_button.setStroke(Color.GREEN);
 		r_button.setFill(Color.WHITE);
-		Rectangle r_start=new Rectangle(470,350,60,30);//開始紐
+		Rectangle r_start=new Rectangle(470,360,60,30);//開始紐
 		r_start.setStroke(Color.BLUE);
 		r_start.setFill(Color.WHITE);
-		Text title=new Text(470,50,"title");
-		Text t_layer=new Text(470,100,"layer: 0");
-		Text t_start=new Text(490,368,"start");
-		Text t_restart=new Text(485,418,"restart");
-		pane.getChildren().addAll(r_info,r_button,r_start,title,t_layer,t_start,t_restart);
+		Text title=new Text(435,50,"松鼠下樓梯");
+		title.setFont(Font.font(25));
+		Text rule=new Text(430,90,"        遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\n左鍵->角色往左移動\n右鍵->角色往右移動"
+				+ "\n\n小心下面來的尖刺\n碰到尖刺及踩空即\n遊戲結束\n\n你能達到第幾層呢?");
+		rule.setFont(Font.font(15));
+		Text t_layer=new Text(460,348,"現在層數: 1");
+		t_layer.setFont(Font.font(15));
+		Text t_start=new Text(488,378,"開始");
+		Text t_restart=new Text(478,418,"重新開始");
+		pane.getChildren().addAll(r_info,r_button,r_start,title,t_layer,t_start,t_restart,rule);
 		//讓層數資料更新
 		Timeline changeinfo=new Timeline(new
-				KeyFrame(Duration.millis(100),e->{t_layer.setText("layer: "+((Layer.layer/11)+1));}));
+				KeyFrame(Duration.millis(100),e->{t_layer.setText("現在層數: "+((Layer.layer/11)+1));}));
 		changeinfo.setCycleCount(Timeline.INDEFINITE);
 		changeinfo.play();
 		
