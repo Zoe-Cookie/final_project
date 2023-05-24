@@ -106,6 +106,8 @@ public class project extends Application{
 				moveRectangle(rs[i],c);
 			}
 			registerKeyboardEventHandler(c);//上下左右改成函數
+			pane.getChildren().remove(t_start);
+			pane.getChildren().remove(r_start);
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
