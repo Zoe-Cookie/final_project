@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -33,7 +34,14 @@ public class project extends Application{
 		ImageView iv_ceiling = new ImageView(Ceiling);
 		ImagePattern ip_nails = new ImagePattern(Nails);
 		pane.getChildren().add(iv_ceiling);
-		
+
+		//松鼠角色(有些在底下全域)
+		ImageView iv_squirrel = new ImageView(role.iv_squirrel_stop.getImage()); 
+		iv_squirrel.setFitWidth(40);
+		iv_squirrel.setFitHeight(40);
+		iv_squirrel.setLayoutX(90);
+		iv_squirrel.setLayoutY(2000d/11-30);//一開始在第四快板子上
+
 		//遊戲資訊視窗(包括標題，層數和重新開始按鈕，設定每11塊板子一層)
 		Rectangle r_info=new Rectangle(400,0,200,500);
 		r_info.setFill(Color.ALICEBLUE);
@@ -43,7 +51,7 @@ public class project extends Application{
 		Rectangle r_start=new Rectangle(470,360,60,30);//開始紐
 		r_start.setStroke(Color.BLUE);
 		r_start.setFill(Color.WHITE);
-		Text title=new Text(435,50,"松鼠下樓梯");
+		Text title=new Text(430,50,"小松鼠下樓梯");
 		title.setFont(Font.font(25));
 		Text rule=new Text(430,90,"        遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\n左鍵->角色往左移動\n右鍵->角色往右移動"
 				+ "\n\n小心下面來的尖刺\n碰到尖刺及踩空即\n遊戲結束\n\n你能達到第幾層呢?");
@@ -58,14 +66,6 @@ public class project extends Application{
 				KeyFrame(Duration.millis(100),e->{t_layer.setText("現在層數: "+((Layer.layer/11)+1));}));
 		changeinfo.setCycleCount(Timeline.INDEFINITE);
 		changeinfo.play();
-		
-		
-		//create circle
-		Circle c=new Circle(110,2000d/11-10,10);//一開始在第四快板子上
-		c.setStroke(Color.BLACK);
-		c.setFill(Color.WHITE);
-		
-		
 		
 		//create n rectangles
 		int n=10;
@@ -109,17 +109,18 @@ public class project extends Application{
 		
 		t_start.setOnMouseClicked(e->{//按到start開始遊戲
 			for(int i=0;i<n+1;i++) {  //連續按會加快速度
-				moveRectangle(rs[i],c);
+				moveRectangle(rs[i],iv_squirrel);
 			}
-			registerKeyboardEventHandler(c);//上下左右改成函數
+			registerKeyboardEventHandler(iv_squirrel);//上下左右改成函數
+			iv_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
 			pane.getChildren().remove(r_start);
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
-			pane.getChildren().add(c);	//遊戲進行中不能按restart
-			c.setCenterX(110);			
-			c.setCenterY(2000d/11-10);
+			pane.getChildren().add(iv_squirrel);	//遊戲進行中不能按restart
+			iv_squirrel.setLayoutX(90);			
+			iv_squirrel.setLayoutY(2000d/11-30);
 			for(int i=0;i<n+1;i++) {
 				rs[i].setY(500d/11*(i+1));
 				if(i==10) {
@@ -136,12 +137,13 @@ public class project extends Application{
 				}
 			}
 			Layer.layer=0;//重設layer為
-			registerKeyboardEventHandler(c);
-			c.requestFocus();
+			registerKeyboardEventHandler(iv_squirrel);
+			iv_squirrel.requestFocus();
+			iv_squirrel.setImage(role.iv_squirrel_stop.getImage());
 		});
 		
 		//add to pane
-		pane.getChildren().add(c);
+		pane.getChildren().add(iv_squirrel);
 	
 		//create a handler 讓球碰到板子不會掉下去
 		EventHandler <ActionEvent> eventhandler= (e ->{
@@ -149,43 +151,43 @@ public class project extends Application{
 			int index=0;
 			for(int i=0;i<n+1;i++) {
 			//球碰到地板
-				if((c.getCenterX()>=rs[i].getX() && c.getCenterX()<=rs[i].getX()+rs[i].getWidth())
-					&& c.getCenterY()>=rs[i].getY()-c.getRadius() && c.getCenterY()<=rs[i].getY()-c.getRadius()+1) {
+				if((iv_squirrel.getLayoutX()>=rs[i].getX()-20 && iv_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
+					&& iv_squirrel.getLayoutY()>=rs[i].getY()-30 && iv_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
 					touchGround=true;
 					index=i;
 				}
 			}
 			
-			if(c.getCenterY()>=525 || c.getCenterY()<=c.getRadius() ) {//掉到最下面或碰到頂部失敗
-				pane.getChildren().remove(c);
+			if(iv_squirrel.getLayoutY()>=525 || iv_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
+				pane.getChildren().remove(iv_squirrel);
 //				gameOver(pane,c);
 			}
 			else if(touchGround) {//碰到尖刺球不見但板子仍會繼續移動直到碰到天花板
 				if(rs[10].getFill().equals(ip_nails) && index==10 ) {
-					pane.getChildren().remove(c);
+					pane.getChildren().remove(iv_squirrel);
 				}
 				else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
-					pane.getChildren().remove(c);
+					pane.getChildren().remove(iv_squirrel);
 					//Heart.number=Heart.number-1;
 					//System.out.println(Heart.number);
 				}
 				else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
-					pane.getChildren().remove(c);
+					pane.getChildren().remove(iv_squirrel);
 					//Heart.number=Heart.number-1;
 					//System.out.println(Heart.number);
 				}
 				else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
-					pane.getChildren().remove(c);
+					pane.getChildren().remove(iv_squirrel);
 					//Heart.number=Heart.number-1;
 					//System.out.println(Heart.number);
 	        	}
 				
 			}
 			else if(!touchGround) {
-				c.setCenterY(c.getCenterY()+0.1);
+				iv_squirrel.setLayoutY(iv_squirrel.getLayoutY()+0.1);
 			}
 			else {
-				c.setCenterY(rs[index].getY() - c.getRadius());
+				iv_squirrel.setLayoutY(rs[index].getY() - 30);
 			}
 			
 			
@@ -203,38 +205,49 @@ public class project extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Project");
 		primaryStage.show();
-		c.requestFocus();
+		iv_squirrel.requestFocus();
 		
 		
 	}
 	
 	//控制上下左右放進函式
-	public void registerKeyboardEventHandler(Circle c) {
+	public void registerKeyboardEventHandler(ImageView c) {
+
 	    c.setOnKeyPressed(e -> {
 	        switch (e.getCode()) {
 	            case UP:
-	                c.setCenterY(c.getCenterY() - 10);
+					c.setImage(role.iv_squirrel_stop.getImage());
+	                c.setLayoutY(c.getLayoutY() - 10);
 	                break;
 	            case DOWN:
-	                c.setCenterY(c.getCenterY() + 10);
+					c.setImage(role.iv_squirrel_stop.getImage());
+	                c.setLayoutY(c.getLayoutY() + 10);
 	                break;
 	            case RIGHT:
+					c.setImage(role.iv_squirrel_run2.getImage());
 	                // Make sure the circle doesn't go beyond the right side of the screen
-	                if (c.getCenterX() <= 375) {
-	                    c.setCenterX(c.getCenterX() + 10);
+	                if (c.getLayoutX() <= 375) {
+	                    c.setLayoutX(c.getLayoutX() + 10);
 	                }
 	                break;
 	            case LEFT:
+					c.setImage(role.iv_squirrel_run.getImage());
 	                // Make sure the circle doesn't go beyond the left side of the screen
-	                if (c.getCenterX() >= 25) {
-	                    c.setCenterX(c.getCenterX() - 10);
+	                if (c.getLayoutX() >= 25) {
+	                    c.setLayoutX(c.getLayoutX() - 10);
 	                }
 	                break;
 	            default:
+					c.setImage(role.iv_squirrel_stop.getImage());
 	                break;
 	        }
 	    });
 	    
+		c.setOnKeyReleased(e -> {
+				if(e.getCode()==KeyCode.LEFT) c.setImage(role.iv_squirrel_stop.getImage());
+				else if(e.getCode()==KeyCode.RIGHT) c.setImage(role.iv_squirrel_stop2.getImage());
+		});
+		
 	    Timeline animation=new Timeline(new
 				KeyFrame(Duration.millis(100)));
 		animation.setCycleCount(Timeline.INDEFINITE);
@@ -242,22 +255,22 @@ public class project extends Application{
 	}
 	
 	//讓板子往上動的函式
-	public static void moveRectangle(Rectangle r, Circle c) {
+	public static void moveRectangle(Rectangle r, ImageView c) {
 		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
 			//Floor f=new Floor();
-			if (c.getCenterX()>=r.getX() && c.getCenterX()<=r.getX()+r.getWidth()
-				&& c.getCenterY()>=r.getY()-c.getRadius() && c.getCenterY()<=r.getY()-c.getRadius()+1) {
+			if (c.getLayoutX()>=r.getX()-20 && c.getLayoutX()<=r.getX()+r.getWidth()-20
+				&& c.getLayoutY()>=r.getY()-30 && c.getLayoutY()<=r.getY()-30+1) {
 				moveWithRectangle = true;
 	        }
 	        
-			if(c.getCenterY()>=525 || c.getCenterY()<=c.getRadius() ) {
+			if(c.getLayoutY()>=525 || c.getLayoutY()<=10 ) {
 				//do nothing 圓掉到最下面或碰到頂部而停止
 			}else if (moveWithRectangle) {
 	            //r.setY(c.getCenterY() - 25);
 	        	r.setY(r.getY() - 1);
-	        	c.setCenterY(c.getCenterY()-1);
+	        	c.setLayoutY(c.getLayoutY()-1);
 	        } else if (r.getY() >= 0) {
 	        	r.setY(r.getY() - 1);
 	        } else {
@@ -342,6 +355,19 @@ class Floor extends Rectangle{
 //類似全域變數，計算層數
 class Layer{
 	static int layer=0;
+	
+}
+
+//同上，全域的角色資訊
+class role{
+	static Image Squirrel = new Image("/project/image/squirrel.png");
+	static Image Squirrel2 = new Image("/project/image/squirrel2.png");
+	static Image Squirrel_run = new Image("/project/image/squirrel.gif");
+	static Image Squirrel_run2 = new Image("/project/image/squirrel2.gif");
+	static ImageView iv_squirrel_stop = new ImageView(Squirrel);
+	static ImageView iv_squirrel_stop2 = new ImageView(Squirrel2);
+	static ImageView iv_squirrel_run = new ImageView(Squirrel_run);
+	static ImageView iv_squirrel_run2 = new ImageView(Squirrel_run2);
 }
 
 //血條(目前沒用到)
