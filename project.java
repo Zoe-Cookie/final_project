@@ -1,5 +1,6 @@
 package project;
 
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -52,15 +53,21 @@ public class project extends Application{
 		r_start.setStroke(Color.BLUE);
 		r_start.setFill(Color.WHITE);
 		Text title=new Text(430,50,"小松鼠下樓梯");
+		// 設定字體(可以設定原本就有的字體，但沒辦法設定成網路上下載的字體)
+		//String fontPath = "/resources/fonts/setofont.ttf";
+        //Font font = Font.loadFont(getClass().getResourceAsStream(fontPath), 25);
+		//Font font=Font.loadFont("/resources/fonts/setofont.ttf", 25);
+		//title.setStyle("-fx-font-family: Setofont");
 		title.setFont(Font.font(25));
+		//ttitle.setFont(font);
 		Text rule=new Text(430,90,"        遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\n左鍵->角色往左移動\n右鍵->角色往右移動"
-				+ "\n\n小心下面來的尖刺\n碰到尖刺及踩空即\n遊戲結束\n\n你能達到第幾層呢?");
+				+ "\n\n小心下面來的尖刺\n碰到尖刺及墜落地\n底即遊戲結束\n\n你能下到第幾層呢?");
 		rule.setFont(Font.font(15));
 		Text t_layer=new Text(460,348,"現在層數: 1");
 		t_layer.setFont(Font.font(15));
 		Text t_start=new Text(488,378,"開始");
 		Text t_restart=new Text(478,418,"重新開始");
-		pane.getChildren().addAll(r_info,r_button,r_start,title,t_layer,t_start,t_restart,rule);
+		pane.getChildren().addAll(r_info,r_start,title,t_layer,t_start,rule);
 		//讓層數資料更新
 		Timeline changeinfo=new Timeline(new
 				KeyFrame(Duration.millis(100),e->{t_layer.setText("現在層數: "+((Layer.layer/11)+1));}));
@@ -115,6 +122,7 @@ public class project extends Application{
 			iv_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
 			pane.getChildren().remove(r_start);
+			pane.getChildren().addAll(r_button,t_restart);
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
@@ -165,19 +173,23 @@ public class project extends Application{
 			else if(touchGround) {//碰到尖刺球不見但板子仍會繼續移動直到碰到天花板
 				if(rs[10].getFill().equals(ip_nails) && index==10 ) {
 					pane.getChildren().remove(iv_squirrel);
+					iv_squirrel.setLayoutY(0);
 				}
 				else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
 					pane.getChildren().remove(iv_squirrel);
+					iv_squirrel.setLayoutY(0);
 					//Heart.number=Heart.number-1;
 					//System.out.println(Heart.number);
 				}
 				else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
 					pane.getChildren().remove(iv_squirrel);
+					iv_squirrel.setLayoutY(0);
 					//Heart.number=Heart.number-1;
 					//System.out.println(Heart.number);
 				}
 				else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
 					pane.getChildren().remove(iv_squirrel);
+					iv_squirrel.setLayoutY(0);
 					//Heart.number=Heart.number-1;
 					//System.out.println(Heart.number);
 	        	}
@@ -226,14 +238,14 @@ public class project extends Application{
 	            case RIGHT:
 					c.setImage(role.iv_squirrel_run2.getImage());
 	                // Make sure the circle doesn't go beyond the right side of the screen
-	                if (c.getLayoutX() <= 375) {
+	                if (c.getLayoutX() <= 355) {
 	                    c.setLayoutX(c.getLayoutX() + 10);
 	                }
 	                break;
 	            case LEFT:
 					c.setImage(role.iv_squirrel_run.getImage());
 	                // Make sure the circle doesn't go beyond the left side of the screen
-	                if (c.getLayoutX() >= 25) {
+	                if (c.getLayoutX() >= 10) {
 	                    c.setLayoutX(c.getLayoutX() - 10);
 	                }
 	                break;
@@ -265,7 +277,7 @@ public class project extends Application{
 				moveWithRectangle = true;
 	        }
 	        
-			if(c.getLayoutY()>=525 || c.getLayoutY()<=10 ) {
+			if(c.getLayoutY()>=525 || c.getLayoutY()<=10 || (c.getLayoutX()==0 && c.getLayoutY()==0)) {
 				//do nothing 圓掉到最下面或碰到頂部而停止
 			}else if (moveWithRectangle) {
 	            //r.setY(c.getCenterY() - 25);
