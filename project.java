@@ -28,6 +28,12 @@ public class project extends Application{
 	public void start(Stage primaryStage) {
 		//create a pane
 		Pane pane=new Pane();
+		//背景
+		Image background = new Image("/project/image/blueback.jpg");
+		ImageView iv_background = new ImageView(background);
+		iv_background.setFitWidth(400);
+		iv_background.setFitHeight(500);
+		pane.getChildren().add(iv_background);
 		
         //天花板尖刺和尖刺板子(還改了整體視窗x變成400、板子減少一個放成尖刺、板子的y間距
 		Image Ceiling = new Image("/project/image/Ceiling.png");
@@ -42,7 +48,8 @@ public class project extends Application{
 		iv_squirrel.setFitHeight(40);
 		iv_squirrel.setLayoutX(90);
 		iv_squirrel.setLayoutY(2000d/11-30);//一開始在第四快板子上
-
+		
+		
 		//遊戲資訊視窗(包括標題，層數和重新開始按鈕，設定每11塊板子一層)
 		Rectangle r_info=new Rectangle(400,0,200,500);
 		r_info.setFill(Color.ALICEBLUE);
@@ -52,14 +59,16 @@ public class project extends Application{
 		Rectangle r_start=new Rectangle(470,360,60,30);//開始紐
 		r_start.setStroke(Color.BLUE);
 		r_start.setFill(Color.WHITE);
-		Text title=new Text(430,50,"小松鼠下樓梯");
+		Text title=new Text(430,50,"松鼠下樓梯");
 		// 設定字體(可以設定原本就有的字體，但沒辦法設定成網路上下載的字體)
 		//String fontPath = "/resources/fonts/setofont.ttf";
         //Font font = Font.loadFont(getClass().getResourceAsStream(fontPath), 25);
-		//Font font=Font.loadFont("/resources/fonts/setofont.ttf", 25);
-		//title.setStyle("-fx-font-family: Setofont");
+		//title.setFont(Font.loadFont("/resources/fonts/SetoFont.ttf", 25));
+		//Font.loadFont("/resources/fonts/STXINGKA.TTF", 25);
+		//title.setStyle("-fx-font-family: SetoFont");
 		title.setFont(Font.font(25));
-		//ttitle.setFont(font);
+		//title.setFont(Font.font("STXingkai",25));
+		//title.setFont(font);
 		Text rule=new Text(430,90,"        遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\n左鍵->角色往左移動\n右鍵->角色往右移動"
 				+ "\n\n小心下面來的尖刺\n碰到尖刺及墜落地\n底即遊戲結束\n\n你能下到第幾層呢?");
 		rule.setFont(Font.font(15));
@@ -211,6 +220,7 @@ public class project extends Application{
 				KeyFrame(Duration.millis(1),eventhandler));
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.play();
+		
 		
 		//add pane to scene and stage
 		Scene scene=new Scene(pane,400+200,500);
