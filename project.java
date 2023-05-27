@@ -176,6 +176,7 @@ public class project extends Application{
 					rs[i].setX((int)(Math.random()*340));
 				}
 			}
+
 			Layer.layer=0;//重設layer為
 			registerKeyboardEventHandler(iv_squirrel);
 			iv_squirrel.requestFocus();
@@ -243,12 +244,14 @@ public class project extends Application{
 				KeyFrame(Duration.millis(1),eventhandler));
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.play();
-		
-		
+
 		//add pane to scene and stage
 		Scene scene=new Scene(pane,400+200,500);
+
 		primaryStage.setScene(scene);
-		primaryStage.setTitle("Project");
+		primaryStage.getIcons().add(new Image("/project/image/squirrel.png"));
+		primaryStage.setTitle("松鼠下樓梯");
+		primaryStage.setResizable(false);
 		primaryStage.show();
 		iv_squirrel.requestFocus();
 		
