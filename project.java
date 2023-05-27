@@ -157,6 +157,7 @@ public class project extends Application{
 			registerKeyboardEventHandler(iv_squirrel);
 			iv_squirrel.requestFocus();
 			iv_squirrel.setImage(role.iv_squirrel_stop.getImage());
+
 		});
 		
 		//add to pane
