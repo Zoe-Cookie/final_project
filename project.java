@@ -339,22 +339,22 @@ public class project extends Application{
 
 	    c.setOnKeyPressed(e -> {
 	        switch (e.getCode()) {
-	            case UP:
+	            case W:
 					c.setImage(role.iv_squirrel_stop.getImage());
 	                c.setLayoutY(c.getLayoutY() - 10);
 	                break;
-	            case DOWN:
+	            case S:
 					c.setImage(role.iv_squirrel_stop.getImage());
 	                c.setLayoutY(c.getLayoutY() + 10);
 	                break;
-	            case RIGHT:
+	            case D:
 					c.setImage(role.iv_squirrel_run2.getImage());
 	                // Make sure the circle doesn't go beyond the right side of the screen
 	                if (c.getLayoutX() <= 355) {
 	                    c.setLayoutX(c.getLayoutX() + 10);
 	                }
 	                break;
-	            case LEFT:
+	            case A:
 					c.setImage(role.iv_squirrel_run.getImage());
 	                // Make sure the circle doesn't go beyond the left side of the screen
 	                if (c.getLayoutX() >= 10) {
