@@ -1,6 +1,5 @@
 package project;
 
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -20,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import project.sound.Sounds;
 import javafx.scene.effect.ColorAdjust;
 
 public class project extends Application{
@@ -30,10 +30,34 @@ public class project extends Application{
 		//create a pane
 		Pane pane=new Pane();
 
+		sound.playloop(Sounds.BGM);
+		Rectangle music=new Rectangle(570, 470, 25, 25);
+		Image volume = new Image("/project/resources/image/volume.png");
+		ImagePattern iv_volume = new ImagePattern(volume);
+		Image mute = new Image("/project/resources/image/mute.png");
+		ImagePattern iv_mute = new ImagePattern(mute);
+		music.setFill(iv_volume);
+
+		music.setOnMouseClicked(e->{
+			if(music.getFill()==iv_volume)
+			{
+				sound.stoploop(Sounds.BGM);
+				music.setFill(iv_mute);
+				music.setX(565);
+			}
+			else
+			{
+				sound.playloop(Sounds.BGM);
+				music.setFill(iv_volume);
+				music.setX(570);
+			}
+
+		});
+
 		ColorAdjust colorAdjust=new ColorAdjust();
 
 		//背景
-		Image background = new Image("/project/image/blueback.jpg");
+		Image background = new Image("/project/resources/image/blueback.jpg");
 		ImageView iv_background = new ImageView(background);
 		iv_background.setFitWidth(400);
 		iv_background.setFitHeight(500);
@@ -53,8 +77,8 @@ public class project extends Application{
 		Color skyblue = Color.SKYBLUE; 
 
         //天花板尖刺和尖刺板子(還改了整體視窗x變成400、板子減少一個放成尖刺、板子的y間距)
-		Image Ceiling = new Image("/project/image/Ceiling.png");
-		Image Nails = new Image("/project/image/Nails.png");
+		Image Ceiling = new Image("/project/resources/image/Ceiling.png");
+		Image Nails = new Image("/project/resources/image/Nails.png");
 		ImageView iv_ceiling = new ImageView(Ceiling);
 		ImagePattern ip_nails = new ImagePattern(Nails);
 		pane.getChildren().add(iv_ceiling);
@@ -112,7 +136,7 @@ public class project extends Application{
 		t_layer.setFont(font);
 		t_toplayer.setFont(font);
 
-		pane.getChildren().addAll(r_info,r_start,title,t_layer,t_start,rule,t_toplayer);
+		pane.getChildren().addAll(r_info,r_start,title,t_layer,t_start,rule,t_toplayer, music);
 		//讓層數資料更新
 		Timeline changeinfo=new Timeline(new
 				KeyFrame(Duration.millis(100),e->{
@@ -184,7 +208,7 @@ public class project extends Application{
 		int n=10;
 		Rectangle [] rs=new Rectangle[n+1];
 		Rectangle start=new Rectangle(80,500d/11,60,10);//1250d/11 210
-		Image Wood = new Image("/project/image/wood.jpg");
+		Image Wood = new Image("/project/resources/image/wood.jpg");
 		ImagePattern ip_normal = new ImagePattern(Wood);
 		start.setFill(ip_normal);
 		rs[0]=start;
@@ -325,7 +349,7 @@ public class project extends Application{
 		Scene scene=new Scene(pane,400+200,500);
 
 		primaryStage.setScene(scene);
-		primaryStage.getIcons().add(new Image("/project/image/squirrel.png"));
+		primaryStage.getIcons().add(new Image("/project/resources/image/squirrel.png"));
 		primaryStage.setTitle("松鼠下樓梯");
 		primaryStage.setResizable(false);
 		primaryStage.show();
@@ -366,10 +390,11 @@ public class project extends Application{
 	                break;
 	        }
 	    });
-	    
+
+		
 		c.setOnKeyReleased(e -> {
-				if(e.getCode()==KeyCode.LEFT) c.setImage(role.iv_squirrel_stop.getImage());
-				else if(e.getCode()==KeyCode.RIGHT) c.setImage(role.iv_squirrel_stop2.getImage());
+				if(e.getCode()==KeyCode.A) c.setImage(role.iv_squirrel_stop.getImage());
+				else if(e.getCode()==KeyCode.D) c.setImage(role.iv_squirrel_stop2.getImage());
 		});
 		
 	    Timeline animation=new Timeline(new
@@ -488,10 +513,10 @@ class Layer{
 
 //同上，全域的角色資訊
 class role{
-	static Image Squirrel = new Image("/project/image/squirrel.png");
-	static Image Squirrel2 = new Image("/project/image/squirrel2.png");
-	static Image Squirrel_run = new Image("/project/image/squirrel.gif");
-	static Image Squirrel_run2 = new Image("/project/image/squirrel2.gif");
+	static Image Squirrel = new Image("/project/resources/image/squirrel.png");
+	static Image Squirrel2 = new Image("/project/resources/image/squirrel2.png");
+	static Image Squirrel_run = new Image("/project/resources/image/squirrel.gif");
+	static Image Squirrel_run2 = new Image("/project/resources/image/squirrel2.gif");
 	static ImageView iv_squirrel_stop = new ImageView(Squirrel);
 	static ImageView iv_squirrel_stop2 = new ImageView(Squirrel2);
 	static ImageView iv_squirrel_run = new ImageView(Squirrel_run);
