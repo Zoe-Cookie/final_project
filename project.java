@@ -64,7 +64,7 @@ public class project extends Application{
 		pane.getChildren().add(iv_background);
 		iv_background.setEffect(colorAdjust);
 		
-		Color red = Color.RED;
+		Color red = Color.MINTCREAM;
 		Color orange = Color.ORANGE;
 		Color yellow = Color.YELLOW;
 		Color green = Color.GREEN;
@@ -94,23 +94,14 @@ public class project extends Application{
 		//遊戲資訊視窗(包括標題，層數和重新開始按鈕，設定每11塊板子一層)
 		Rectangle r_info=new Rectangle(400,0,200,500);
 		r_info.setFill(Color.ALICEBLUE);
-		Rectangle r_button=new Rectangle(460,410,80,30);//重新開始紐
+		Rectangle r_button=new Rectangle(460,442,80,30);//重新開始紐
 		r_button.setStroke(Color.GREEN);
 		r_button.setFill(Color.WHITE);
-		Rectangle r_start=new Rectangle(470,410,60,30);//開始紐
+		Rectangle r_start=new Rectangle(460,410,80,30);//開始紐
 		r_start.setStroke(Color.BLUE);
 		r_start.setFill(Color.WHITE);
 		Text title=new Text(420,50,"松鼠下樓梯");
 
-		// 設定字體(可以設定原本就有的字體，但沒辦法設定成網路上下載的字體)
-		//String fontPath = "/resources/fonts/setofont.ttf";
-        //Font font = Font.loadFont(getClass().getResourceAsStream(fontPath), 25);
-		//title.setFont(Font.loadFont("/resources/fonts/SetoFont.ttf", 25));
-		//Font.loadFont("/resources/fonts/STXINGKA.TTF", 25);
-		//title.setStyle("-fx-font-family: SetoFont");
-		
-		//title.setFont(Font.font("STXingkai",25));
-		//title.setFont(font);
 
 		Text rule=new Text(430,90,"       遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\n左鍵->角色往左移動\n右鍵->角色往右移動"
 				+ "\n\n小心下面來的尖刺\n碰到尖刺及墜落地\n底即遊戲結束\n\n你能下到第幾層呢?");
@@ -119,7 +110,9 @@ public class project extends Application{
 		t_layer.setFont(Font.font(15));
 		Text t_toplayer=new Text(460,378,"最高層數: 1");
 		Text t_start=new Text(485, 428,"開始");
-		Text t_restart=new Text(468,428,"重新開始");
+		Text t_start2=new Text(485, 428,"開始");
+		Text t_pause=new Text(485, 428,"暫停");
+		Text t_restart=new Text(468,460,"重新開始");
 
 		//字體
 		//Cubic_11_1.010_R.ttf
@@ -132,6 +125,8 @@ public class project extends Application{
 		rule.setFont(font);
 		t_layer.setFont(font);
 		t_start.setFont(font);
+		t_start2.setFont(font);
+		t_pause.setFont(font);
 		t_restart.setFont(font);
 		t_layer.setFont(font);
 		t_toplayer.setFont(font);
@@ -244,20 +239,34 @@ public class project extends Application{
 		Timeline difficulties=new Timeline(new KeyFrame(Duration.millis(1),thirdhandler));
 		difficulties.setCycleCount(Timeline.INDEFINITE);
 		difficulties.play();
-		
+		Stop.first_start=true;
 		t_start.setOnMouseClicked(e->{//按到start開始遊戲
-			for(int i=0;i<n+1;i++) {  //連續按會加快速度
-				moveRectangle(rs[i],iv_squirrel);
-			}
+			
 			registerKeyboardEventHandler(iv_squirrel);//上下左右改成函數
 			iv_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
-			pane.getChildren().remove(r_start);
-			pane.getChildren().addAll(r_button,t_restart);
+			if(Stop.first_start) {
+				for(int i=0;i<n+1;i++) {  //連續按會加快速度
+					moveRectangle(rs[i],iv_squirrel);
+				}
+				pane.getChildren().addAll(r_button,t_restart,t_pause);
+			}
+			else {
+				pane.getChildren().add(t_pause);
+			}
+			Stop.first_start=false;
+			Stop.stop=false;
+		});
+		
+		
+		t_pause.setOnMouseClicked(e->{
+			pane.getChildren().remove(t_pause);
+			pane.getChildren().add(t_start);
+			Stop.stop=true;
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
-			colorAdjust.setHue(1);
+			//colorAdjust.setHue(hue0);
 			pane.getChildren().add(iv_squirrel);	//遊戲進行中不能按restart
 			iv_squirrel.setLayoutX(90);			
 			iv_squirrel.setLayoutY(2000d/11-30);
@@ -281,6 +290,7 @@ public class project extends Application{
 			registerKeyboardEventHandler(iv_squirrel);
 			iv_squirrel.requestFocus();
 			iv_squirrel.setImage(role.iv_squirrel_stop.getImage());
+			Stop.stop=false;
 		});
 		
 		//add to pane
@@ -290,52 +300,53 @@ public class project extends Application{
 		EventHandler <ActionEvent> eventhandler= (e ->{
 			boolean touchGround=false;
 			int index=0;
-			for(int i=0;i<n+1;i++) {
-			//球碰到地板
-				if((iv_squirrel.getLayoutX()>=rs[i].getX()-20 && iv_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
-					&& iv_squirrel.getLayoutY()>=rs[i].getY()-30 && iv_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
-					touchGround=true;
-					index=i;
+			if(!Stop.stop) {
+				for(int i=0;i<n+1;i++) {
+				//球碰到地板
+					if((iv_squirrel.getLayoutX()>=rs[i].getX()-20 && iv_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
+						&& iv_squirrel.getLayoutY()>=rs[i].getY()-30 && iv_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
+						touchGround=true;
+						index=i;
+					}
 				}
-			}
-			
-			if(iv_squirrel.getLayoutY()>=525 || iv_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
-				pane.getChildren().remove(iv_squirrel);
-//				gameOver(pane,c);
-			}
-			else if(touchGround) {//碰到尖刺球不見但板子仍會繼續移動直到碰到天花板
-				if(rs[10].getFill().equals(ip_nails) && index==10 ) {
-					pane.getChildren().remove(iv_squirrel);
-					iv_squirrel.setLayoutY(0);
-				}
-				else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
-					pane.getChildren().remove(iv_squirrel);
-					iv_squirrel.setLayoutY(0);
-					//Heart.number=Heart.number-1;
-					//System.out.println(Heart.number);
-				}
-				else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
-					pane.getChildren().remove(iv_squirrel);
-					iv_squirrel.setLayoutY(0);
-					//Heart.number=Heart.number-1;
-					//System.out.println(Heart.number);
-				}
-				else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
-					pane.getChildren().remove(iv_squirrel);
-					iv_squirrel.setLayoutY(0);
-					//Heart.number=Heart.number-1;
-					//System.out.println(Heart.number);
-	        	}
 				
-			}
-			else if(!touchGround) {
-				iv_squirrel.setLayoutY(iv_squirrel.getLayoutY()+0.1);
-			}
-			else {
-				iv_squirrel.setLayoutY(rs[index].getY() - 30);
-			}
+				if(iv_squirrel.getLayoutY()>=525 || iv_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
+					pane.getChildren().remove(iv_squirrel);
+					//gameOver(pane,c);
+				}
+				else if(touchGround) {//碰到尖刺球不見
+					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
+						pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setLayoutY(0);
+					}
+					else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
+						pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setLayoutY(0);
+						//Heart.number=Heart.number-1;
+						//System.out.println(Heart.number);
+					}
+					else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
+						pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setLayoutY(0);
+						//Heart.number=Heart.number-1;
+						//System.out.println(Heart.number);
+					}
+					else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
+						pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setLayoutY(0);
+						//Heart.number=Heart.number-1;
+						//System.out.println(Heart.number);
+		        	}
+					
+				}
+				else if(!touchGround ) {
+					iv_squirrel.setLayoutY(iv_squirrel.getLayoutY()+0.1);
+				}
+				else {
+					iv_squirrel.setLayoutY(rs[index].getY() - 30);
+				}
 			
-			
+			}
 		});
 		
 		
@@ -362,41 +373,43 @@ public class project extends Application{
 	public void registerKeyboardEventHandler(ImageView c) {
 
 	    c.setOnKeyPressed(e -> {
-	        switch (e.getCode()) {
-	            case W:
-					c.setImage(role.iv_squirrel_stop.getImage());
-	                c.setLayoutY(c.getLayoutY() - 10);
-	                break;
-	            case S:
-					c.setImage(role.iv_squirrel_stop.getImage());
-	                c.setLayoutY(c.getLayoutY() + 10);
-	                break;
-	            case D:
-					c.setImage(role.iv_squirrel_run2.getImage());
-	                // Make sure the circle doesn't go beyond the right side of the screen
-	                if (c.getLayoutX() <= 355) {
-	                    c.setLayoutX(c.getLayoutX() + 10);
-	                }
-	                break;
-	            case A:
-					c.setImage(role.iv_squirrel_run.getImage());
-	                // Make sure the circle doesn't go beyond the left side of the screen
-	                if (c.getLayoutX() >= 10) {
-	                    c.setLayoutX(c.getLayoutX() - 10);
-	                }
-	                break;
-	            default:
-					c.setImage(role.iv_squirrel_stop.getImage());
-	                break;
-	        }
-	    });
-
-		
-		c.setOnKeyReleased(e -> {
-				if(e.getCode()==KeyCode.A) c.setImage(role.iv_squirrel_stop.getImage());
-				else if(e.getCode()==KeyCode.D) c.setImage(role.iv_squirrel_stop2.getImage());
-		});
-		
+	    	if(!Stop.stop) {
+		        switch (e.getCode()) {
+		            case W:
+						c.setImage(role.iv_squirrel_stop.getImage());
+		                c.setLayoutY(c.getLayoutY() - 10);
+		                break;
+		            case S:
+						c.setImage(role.iv_squirrel_stop.getImage());
+		                c.setLayoutY(c.getLayoutY() + 10);
+		                break;
+		            case D:
+						c.setImage(role.iv_squirrel_run2.getImage());
+		                // Make sure the circle doesn't go beyond the right side of the screen
+		                if (c.getLayoutX() <= 355) {
+		                    c.setLayoutX(c.getLayoutX() + 10);
+		                }
+		                break;
+		            case A:
+						c.setImage(role.iv_squirrel_run.getImage());
+		                // Make sure the circle doesn't go beyond the left side of the screen
+		                if (c.getLayoutX() >= 10) {
+		                    c.setLayoutX(c.getLayoutX() - 10);
+		                }
+		                break;
+		            default:
+						c.setImage(role.iv_squirrel_stop.getImage());
+		                break;
+		        	}
+		     }   
+		   });
+	
+			
+			c.setOnKeyReleased(e -> {
+					if(e.getCode()==KeyCode.A) c.setImage(role.iv_squirrel_stop.getImage());
+					else if(e.getCode()==KeyCode.D) c.setImage(role.iv_squirrel_stop2.getImage());
+			});
+	    
 	    Timeline animation=new Timeline(new
 				KeyFrame(Duration.millis(100)));
 		animation.setCycleCount(Timeline.INDEFINITE);
@@ -414,7 +427,7 @@ public class project extends Application{
 				moveWithRectangle = true;
 	        }
 	        
-			if(c.getLayoutY()>=525 || c.getLayoutY()<=10 || (c.getLayoutX()==0 && c.getLayoutY()==0)) {
+			if(c.getLayoutY()>=525 || c.getLayoutY()<=10 || (c.getLayoutX()==0 && c.getLayoutY()==0) || Stop.stop) {
 				//do nothing 圓掉到最下面或碰到頂部而停止
 			}else if (moveWithRectangle) {
 	            //r.setY(c.getCenterY() - 25);
@@ -523,6 +536,10 @@ class role{
 	static ImageView iv_squirrel_run2 = new ImageView(Squirrel_run2);
 }
 
+class Stop{
+	static boolean stop;
+	static boolean first_start;
+}
 //血條(目前沒用到)
 class Heart{
 	static int number=3;
