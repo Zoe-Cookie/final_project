@@ -298,14 +298,14 @@ public class project extends Application{
 	
 		//create a handler 讓球碰到板子不會掉下去
 		EventHandler <ActionEvent> eventhandler= (e ->{
-			boolean touchGround=false;
+			control.touchGround=false;
 			int index=0;
 			if(!Stop.stop) {
 				for(int i=0;i<n+1;i++) {
 				//球碰到地板
 					if((iv_squirrel.getLayoutX()>=rs[i].getX()-20 && iv_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
 						&& iv_squirrel.getLayoutY()>=rs[i].getY()-30 && iv_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
-						touchGround=true;
+						control.touchGround=true;
 						index=i;
 					}
 				}
@@ -314,7 +314,7 @@ public class project extends Application{
 					pane.getChildren().remove(iv_squirrel);
 					//gameOver(pane,c);
 				}
-				else if(touchGround) {//碰到尖刺球不見
+				else if(control.touchGround) {//碰到尖刺球不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
 						pane.getChildren().remove(iv_squirrel);
 						iv_squirrel.setLayoutY(0);
@@ -339,7 +339,7 @@ public class project extends Application{
 		        	}
 					
 				}
-				else if(!touchGround ) {
+				else if(!control.touchGround ) {
 					iv_squirrel.setLayoutY(iv_squirrel.getLayoutY()+0.1);
 				}
 				else {
@@ -375,13 +375,16 @@ public class project extends Application{
 	    c.setOnKeyPressed(e -> {
 	    	if(!Stop.stop) {
 		        switch (e.getCode()) {
-		            case W:
-						c.setImage(role.iv_squirrel_stop.getImage());
-		                c.setLayoutY(c.getLayoutY() - 10);
-		                break;
+		            // case W:
+					// 	c.setImage(role.iv_squirrel_stop.getImage());
+		            //     c.setLayoutY(c.getLayoutY() - 10);
+		            //     break;
 		            case S:
-						c.setImage(role.iv_squirrel_stop.getImage());
-		                c.setLayoutY(c.getLayoutY() + 10);
+						if(!control.touchGround)
+						{
+							c.setImage(role.iv_squirrel_stop.getImage());
+		                	c.setLayoutY(c.getLayoutY() + 10);
+						}
 		                break;
 		            case D:
 						c.setImage(role.iv_squirrel_run2.getImage());
@@ -534,6 +537,10 @@ class role{
 	static ImageView iv_squirrel_stop2 = new ImageView(Squirrel2);
 	static ImageView iv_squirrel_run = new ImageView(Squirrel_run);
 	static ImageView iv_squirrel_run2 = new ImageView(Squirrel_run2);
+}
+
+class control{
+	static boolean touchGround = false;
 }
 
 class Stop{
