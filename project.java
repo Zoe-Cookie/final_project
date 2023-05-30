@@ -240,13 +240,13 @@ public class project extends Application{
 		Timeline difficulties=new Timeline(new KeyFrame(Duration.millis(1),thirdhandler));
 		difficulties.setCycleCount(Timeline.INDEFINITE);
 		difficulties.play();
-		Stop.first_start=true;
+		Flag.first_start=true;
 		t_start.setOnMouseClicked(e->{//按到start開始遊戲
 			
 			registerKeyboardEventHandler(r_squirrel);//上下左右改成函數
 			r_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
-			if(Stop.first_start) {
+			if(Flag.first_start) {
 				for(int i=0;i<n+1;i++) {  //連續按會加快速度
 					moveRectangle(rs[i],r_squirrel);
 				}
@@ -255,22 +255,32 @@ public class project extends Application{
 			else {
 				pane.getChildren().add(t_pause);
 			}
-			Stop.first_start=false;
-			Stop.stop=false;
+			Flag.first_start=false;
+			Flag.pause=false;
+			
 		});
 		
 		
 		t_pause.setOnMouseClicked(e->{
 			pane.getChildren().remove(t_pause);
 			pane.getChildren().add(t_start);
-			Stop.stop=true;
+			Flag.pause=true;
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
-			//colorAdjust.setHue(hue0);		//遊戲進行中不能按restart
+			//colorAdjust.setHue(hue0);		
 			//pane.getChildren().add(iv_squirrel);
-			pane.getChildren().add(r_start);
-			pane.getChildren().add(t_pause);
+			if(r_start.getParent()==null) {//讓遊戲進行中或暫停時能按restart
+				pane.getChildren().add(r_start);
+				pane.getChildren().add(t_pause);
+			}
+			else {
+				if(t_start.getParent()==pane) {
+					pane.getChildren().remove(t_start);
+					pane.getChildren().add(t_pause);
+				}
+			}
+			
 			r_squirrel.setLayoutX(90);			
 			r_squirrel.setLayoutY(2000d/11-30);
 			for(int i=0;i<n+1;i++) {
@@ -293,7 +303,8 @@ public class project extends Application{
 			registerKeyboardEventHandler(r_squirrel);
 			r_squirrel.requestFocus();
 			r_squirrel.setFill(role.ip_squirrel_stop);
-			Stop.stop=false;
+			Flag.pause=false;
+			Flag.stop=false;
 		});
 		
 		//add to pane
@@ -301,14 +312,14 @@ public class project extends Application{
 	
 		//create a handler 讓球碰到板子不會掉下去
 		EventHandler <ActionEvent> eventhandler= (e ->{
-			control.touchGround=false;
+			Flag.touchGround=false;
 			int index=0;
-			if(!Stop.stop) {
+			if(!Flag.pause) {
 				for(int i=0;i<n+1;i++) {
 				//球碰到地板
 					if((r_squirrel.getLayoutX()>=rs[i].getX()-20 && r_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
 						&& r_squirrel.getLayoutY()>=rs[i].getY()-30 && r_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
-						control.touchGround=true;
+						Flag.touchGround=true;
 						index=i;
 					}
 				}
@@ -316,16 +327,18 @@ public class project extends Application{
 				if(r_squirrel.getLayoutY()>=490 || r_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
 					//pane.getChildren().remove(iv_squirrel);
 					r_squirrel.setFill(role.ip_dead);
+					Flag.stop=true;
 					pane.getChildren().remove(t_pause);
 					pane.getChildren().remove(r_start);
 					//gameOver(pane,c);
 				}
-				else if(control.touchGround) {//碰到尖刺球不見
+				else if(Flag.touchGround) {//碰到尖刺球不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
-						r_squirrel.setLayoutY(0);
+						//r_squirrel.setLayoutY(0);
+						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 					}
@@ -333,7 +346,8 @@ public class project extends Application{
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
-						r_squirrel.setLayoutY(0);
+						//r_squirrel.setLayoutY(0);
+						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
@@ -343,7 +357,8 @@ public class project extends Application{
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
-						r_squirrel.setLayoutY(0);
+						//r_squirrel.setLayoutY(0);
+						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
@@ -353,7 +368,8 @@ public class project extends Application{
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
-						r_squirrel.setLayoutY(0);
+						//r_squirrel.setLayoutY(0);
+						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
@@ -361,7 +377,7 @@ public class project extends Application{
 		        	}
 					
 				}
-				else if(!control.touchGround ) {
+				else if(!Flag.touchGround ) {
 					r_squirrel.setLayoutY(r_squirrel.getLayoutY()+0.1);
 				}
 				else {
@@ -395,14 +411,14 @@ public class project extends Application{
 	public void registerKeyboardEventHandler(Rectangle c) {
 
 	    c.setOnKeyPressed(e -> {
-	    	if(!Stop.stop) {
+	    	if((!Flag.pause) && (!Flag.stop)) {
 		        switch (e.getCode()) {
 		            // case W:
 					// 	c.setImage(role.iv_squirrel_stop.getImage());
 		            //     c.setLayoutY(c.getLayoutY() - 10);
 		            //     break;
 		            case S:
-						if(!control.touchGround)
+						if(!Flag.touchGround)
 						{
 		                	c.setLayoutY(c.getLayoutY() + 10);
 						}
@@ -450,7 +466,7 @@ public class project extends Application{
 				moveWithRectangle = true;
 	        }
 	        
-			if(c.getLayoutY()>=490 || c.getLayoutY()<=10 || (c.getLayoutX()==0 && c.getLayoutY()==0) || Stop.stop) {
+			if(c.getLayoutY()>=490 || c.getLayoutY()<=10 || Flag.pause || Flag.stop) {
 				//do nothing 圓掉到最下面或碰到頂部而停止
 			}else if (moveWithRectangle) {
 	            //r.setY(c.getCenterY() - 25);
@@ -563,14 +579,13 @@ class role{
 	static ImagePattern ip_dead2 = new ImagePattern(dead2);
 }
 
-class control{
+class Flag{
 	static boolean touchGround = false;
-}
-
-class Stop{
-	static boolean stop;
+	static boolean stop=false;
+	static boolean pause;
 	static boolean first_start;
 }
+
 //血條(目前沒用到)
 class Heart{
 	static int number=3;
