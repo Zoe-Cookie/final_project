@@ -103,7 +103,7 @@ public class project extends Application{
 		Text title=new Text(420,50,"松鼠下樓梯");
 
 
-		Text rule=new Text(430,90,"       遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\n左鍵->角色往左移動\n右鍵->角色往右移動"
+		Text rule=new Text(430,90,"       遊戲說明\n\n頭上尖刺步步逼近\n操縱松鼠往下逃吧\n\nA鍵->角色往左移動\nD鍵->角色往右移動"
 				+ "\n\n小心下面來的尖刺\n碰到尖刺及墜落地\n底即遊戲結束\n\n你能下到第幾層呢?");
 		rule.setFont(Font.font(15));
 		Text t_layer=new Text(460,348,"現在層數: 1");
@@ -266,8 +266,10 @@ public class project extends Application{
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
-			//colorAdjust.setHue(hue0);
-			pane.getChildren().add(iv_squirrel);	//遊戲進行中不能按restart
+			//colorAdjust.setHue(hue0);		//遊戲進行中不能按restart
+			//pane.getChildren().add(iv_squirrel);
+			pane.getChildren().add(r_start);
+			pane.getChildren().add(t_pause);
 			iv_squirrel.setLayoutX(90);			
 			iv_squirrel.setLayoutY(2000d/11-30);
 			for(int i=0;i<n+1;i++) {
@@ -310,30 +312,45 @@ public class project extends Application{
 					}
 				}
 				
-				if(iv_squirrel.getLayoutY()>=525 || iv_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
-					pane.getChildren().remove(iv_squirrel);
+				if(iv_squirrel.getLayoutY()>=490 || iv_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
+					//pane.getChildren().remove(iv_squirrel);
+					iv_squirrel.setImage(null);
+					pane.getChildren().remove(t_pause);
+					pane.getChildren().remove(r_start);
 					//gameOver(pane,c);
 				}
 				else if(control.touchGround) {//碰到尖刺球不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
-						pane.getChildren().remove(iv_squirrel);
+						//pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setImage(null);
 						iv_squirrel.setLayoutY(0);
+						pane.getChildren().remove(t_pause);
+						pane.getChildren().remove(r_start);
 					}
 					else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
-						pane.getChildren().remove(iv_squirrel);
+						//pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setImage(null);
 						iv_squirrel.setLayoutY(0);
+						pane.getChildren().remove(t_pause);
+						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
 						//System.out.println(Heart.number);
 					}
 					else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
-						pane.getChildren().remove(iv_squirrel);
+						//pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setImage(null);
 						iv_squirrel.setLayoutY(0);
+						pane.getChildren().remove(t_pause);
+						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
 						//System.out.println(Heart.number);
 					}
 					else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
-						pane.getChildren().remove(iv_squirrel);
+						//pane.getChildren().remove(iv_squirrel);
+						iv_squirrel.setImage(null);
 						iv_squirrel.setLayoutY(0);
+						pane.getChildren().remove(t_pause);
+						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
 						//System.out.println(Heart.number);
 		        	}
@@ -430,7 +447,7 @@ public class project extends Application{
 				moveWithRectangle = true;
 	        }
 	        
-			if(c.getLayoutY()>=525 || c.getLayoutY()<=10 || (c.getLayoutX()==0 && c.getLayoutY()==0) || Stop.stop) {
+			if(c.getLayoutY()>=490 || c.getLayoutY()<=10 || (c.getLayoutX()==0 && c.getLayoutY()==0) || Stop.stop) {
 				//do nothing 圓掉到最下面或碰到頂部而停止
 			}else if (moveWithRectangle) {
 	            //r.setY(c.getCenterY() - 25);
