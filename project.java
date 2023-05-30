@@ -322,7 +322,7 @@ public class project extends Application{
 				else if(control.touchGround) {//碰到尖刺球不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
 						//pane.getChildren().remove(iv_squirrel);
-						iv_squirrel.setImage(null);
+						if(iv_squirrel.getFill()==squirrel||iv_squirrel.getFill()==Squirrel_run)iv_squirrel.setImage();
 						iv_squirrel.setLayoutY(0);
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
@@ -399,7 +399,6 @@ public class project extends Application{
 		            case S:
 						if(!control.touchGround)
 						{
-							c.setImage(role.iv_squirrel_stop.getImage());
 		                	c.setLayoutY(c.getLayoutY() + 10);
 						}
 		                break;
@@ -418,7 +417,6 @@ public class project extends Application{
 		                }
 		                break;
 		            default:
-						c.setImage(role.iv_squirrel_stop.getImage());
 		                break;
 		        	}
 		     }   
@@ -550,10 +548,14 @@ class role{
 	static Image Squirrel2 = new Image("/project/resources/image/squirrel2.png");
 	static Image Squirrel_run = new Image("/project/resources/image/squirrel.gif");
 	static Image Squirrel_run2 = new Image("/project/resources/image/squirrel2.gif");
+	static Image dead = new Image("/project/resources/image/dead.gif");
+	static Image dead2 = new Image("/project/resources/image/dead2.gif");
 	static ImageView iv_squirrel_stop = new ImageView(Squirrel);
 	static ImageView iv_squirrel_stop2 = new ImageView(Squirrel2);
 	static ImageView iv_squirrel_run = new ImageView(Squirrel_run);
 	static ImageView iv_squirrel_run2 = new ImageView(Squirrel_run2);
+	static ImageView iv_dead = new ImageView(dead);
+	static ImageView iv_dead2 = new ImageView(dead2);
 }
 
 class control{
