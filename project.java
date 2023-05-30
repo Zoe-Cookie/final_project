@@ -84,11 +84,12 @@ public class project extends Application{
 		pane.getChildren().add(iv_ceiling);
 
 		//松鼠角色(有些在底下全域)
-		ImageView iv_squirrel = new ImageView(role.iv_squirrel_stop.getImage()); 
-		iv_squirrel.setFitWidth(40);
-		iv_squirrel.setFitHeight(40);
-		iv_squirrel.setLayoutX(90);
-		iv_squirrel.setLayoutY(2000d/11-30);//一開始在第四快板子上
+		Rectangle r_squirrel = new Rectangle(); 
+		r_squirrel.setFill(role.ip_squirrel_stop);
+		r_squirrel.setWidth(40);
+		r_squirrel.setHeight(40);
+		r_squirrel.setLayoutX(90);
+		r_squirrel.setLayoutY(2000d/11-30);//一開始在第四快板子上
 		
 		
 		//遊戲資訊視窗(包括標題，層數和重新開始按鈕，設定每11塊板子一層)
@@ -242,12 +243,12 @@ public class project extends Application{
 		Stop.first_start=true;
 		t_start.setOnMouseClicked(e->{//按到start開始遊戲
 			
-			registerKeyboardEventHandler(iv_squirrel);//上下左右改成函數
-			iv_squirrel.requestFocus();
+			registerKeyboardEventHandler(r_squirrel);//上下左右改成函數
+			r_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
 			if(Stop.first_start) {
 				for(int i=0;i<n+1;i++) {  //連續按會加快速度
-					moveRectangle(rs[i],iv_squirrel);
+					moveRectangle(rs[i],r_squirrel);
 				}
 				pane.getChildren().addAll(r_button,t_restart,t_pause);
 			}
@@ -270,8 +271,8 @@ public class project extends Application{
 			//pane.getChildren().add(iv_squirrel);
 			pane.getChildren().add(r_start);
 			pane.getChildren().add(t_pause);
-			iv_squirrel.setLayoutX(90);			
-			iv_squirrel.setLayoutY(2000d/11-30);
+			r_squirrel.setLayoutX(90);			
+			r_squirrel.setLayoutY(2000d/11-30);
 			for(int i=0;i<n+1;i++) {
 				rs[i].setY(500d/11*(i+1));
 				if(i==10) {
@@ -289,14 +290,14 @@ public class project extends Application{
 			}
 
 			Layer.layer=0;//重設layer為
-			registerKeyboardEventHandler(iv_squirrel);
-			iv_squirrel.requestFocus();
-			iv_squirrel.setImage(role.iv_squirrel_stop.getImage());
+			registerKeyboardEventHandler(r_squirrel);
+			r_squirrel.requestFocus();
+			r_squirrel.setFill(role.ip_squirrel_stop);
 			Stop.stop=false;
 		});
 		
 		//add to pane
-		pane.getChildren().add(iv_squirrel);
+		pane.getChildren().add(r_squirrel);
 	
 		//create a handler 讓球碰到板子不會掉下去
 		EventHandler <ActionEvent> eventhandler= (e ->{
@@ -305,16 +306,16 @@ public class project extends Application{
 			if(!Stop.stop) {
 				for(int i=0;i<n+1;i++) {
 				//球碰到地板
-					if((iv_squirrel.getLayoutX()>=rs[i].getX()-20 && iv_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
-						&& iv_squirrel.getLayoutY()>=rs[i].getY()-30 && iv_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
+					if((r_squirrel.getLayoutX()>=rs[i].getX()-20 && r_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
+						&& r_squirrel.getLayoutY()>=rs[i].getY()-30 && r_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
 						control.touchGround=true;
 						index=i;
 					}
 				}
 				
-				if(iv_squirrel.getLayoutY()>=490 || iv_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
+				if(r_squirrel.getLayoutY()>=490 || r_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
 					//pane.getChildren().remove(iv_squirrel);
-					iv_squirrel.setImage(null);
+					r_squirrel.setFill(role.ip_dead);
 					pane.getChildren().remove(t_pause);
 					pane.getChildren().remove(r_start);
 					//gameOver(pane,c);
@@ -322,15 +323,17 @@ public class project extends Application{
 				else if(control.touchGround) {//碰到尖刺球不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
 						//pane.getChildren().remove(iv_squirrel);
-						if(iv_squirrel.getFill()==squirrel||iv_squirrel.getFill()==Squirrel_run)iv_squirrel.setImage();
-						iv_squirrel.setLayoutY(0);
+						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
+						else r_squirrel.setFill(role.ip_dead2);
+						r_squirrel.setLayoutY(0);
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 					}
 					else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
 						//pane.getChildren().remove(iv_squirrel);
-						iv_squirrel.setImage(null);
-						iv_squirrel.setLayoutY(0);
+						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
+						else r_squirrel.setFill(role.ip_dead2);
+						r_squirrel.setLayoutY(0);
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
@@ -338,8 +341,9 @@ public class project extends Application{
 					}
 					else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
 						//pane.getChildren().remove(iv_squirrel);
-						iv_squirrel.setImage(null);
-						iv_squirrel.setLayoutY(0);
+						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
+						else r_squirrel.setFill(role.ip_dead2);
+						r_squirrel.setLayoutY(0);
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
@@ -347,8 +351,9 @@ public class project extends Application{
 					}
 					else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
 						//pane.getChildren().remove(iv_squirrel);
-						iv_squirrel.setImage(null);
-						iv_squirrel.setLayoutY(0);
+						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
+						else r_squirrel.setFill(role.ip_dead2);
+						r_squirrel.setLayoutY(0);
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 						//Heart.number=Heart.number-1;
@@ -357,10 +362,10 @@ public class project extends Application{
 					
 				}
 				else if(!control.touchGround ) {
-					iv_squirrel.setLayoutY(iv_squirrel.getLayoutY()+0.1);
+					r_squirrel.setLayoutY(r_squirrel.getLayoutY()+0.1);
 				}
 				else {
-					iv_squirrel.setLayoutY(rs[index].getY() - 30);
+					r_squirrel.setLayoutY(rs[index].getY() - 30);
 				}
 			
 			}
@@ -381,13 +386,13 @@ public class project extends Application{
 		primaryStage.setTitle("松鼠下樓梯");
 		primaryStage.setResizable(false);
 		primaryStage.show();
-		iv_squirrel.requestFocus();
+		r_squirrel.requestFocus();
 		
 		
 	}
 	
 	//控制上下左右放進函式
-	public void registerKeyboardEventHandler(ImageView c) {
+	public void registerKeyboardEventHandler(Rectangle c) {
 
 	    c.setOnKeyPressed(e -> {
 	    	if(!Stop.stop) {
@@ -403,14 +408,14 @@ public class project extends Application{
 						}
 		                break;
 		            case D:
-						c.setImage(role.iv_squirrel_run2.getImage());
+						c.setFill(role.ip_squirrel_run2);
 		                // Make sure the circle doesn't go beyond the right side of the screen
 		                if (c.getLayoutX() <= 355) {
 		                    c.setLayoutX(c.getLayoutX() + 10);
 		                }
 		                break;
 		            case A:
-						c.setImage(role.iv_squirrel_run.getImage());
+						c.setFill(role.ip_squirrel_run);
 		                // Make sure the circle doesn't go beyond the left side of the screen
 		                if (c.getLayoutX() >= 10) {
 		                    c.setLayoutX(c.getLayoutX() - 10);
@@ -424,8 +429,8 @@ public class project extends Application{
 	
 			
 			c.setOnKeyReleased(e -> {
-					if(e.getCode()==KeyCode.A) c.setImage(role.iv_squirrel_stop.getImage());
-					else if(e.getCode()==KeyCode.D) c.setImage(role.iv_squirrel_stop2.getImage());
+					if(e.getCode()==KeyCode.A) c.setFill(role.ip_squirrel_stop);
+					else if(e.getCode()==KeyCode.D) c.setFill(role.ip_squirrel_stop2);
 			});
 	    
 	    Timeline animation=new Timeline(new
@@ -435,7 +440,7 @@ public class project extends Application{
 	}
 	
 	//讓板子往上動的函式
-	public static void moveRectangle(Rectangle r, ImageView c) {
+	public static void moveRectangle(Rectangle r,Rectangle c) {
 		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
@@ -548,14 +553,14 @@ class role{
 	static Image Squirrel2 = new Image("/project/resources/image/squirrel2.png");
 	static Image Squirrel_run = new Image("/project/resources/image/squirrel.gif");
 	static Image Squirrel_run2 = new Image("/project/resources/image/squirrel2.gif");
-	static Image dead = new Image("/project/resources/image/dead.gif");
-	static Image dead2 = new Image("/project/resources/image/dead2.gif");
-	static ImageView iv_squirrel_stop = new ImageView(Squirrel);
-	static ImageView iv_squirrel_stop2 = new ImageView(Squirrel2);
-	static ImageView iv_squirrel_run = new ImageView(Squirrel_run);
-	static ImageView iv_squirrel_run2 = new ImageView(Squirrel_run2);
-	static ImageView iv_dead = new ImageView(dead);
-	static ImageView iv_dead2 = new ImageView(dead2);
+	static Image dead = new Image("/project/resources/image/dead.png");
+	static Image dead2 = new Image("/project/resources/image/dead2.png");
+	static ImagePattern ip_squirrel_stop = new ImagePattern(Squirrel);
+	static ImagePattern ip_squirrel_stop2 = new ImagePattern(Squirrel2);
+	static ImagePattern ip_squirrel_run = new ImagePattern(Squirrel_run);
+	static ImagePattern ip_squirrel_run2 = new ImagePattern(Squirrel_run2);
+	static ImagePattern ip_dead = new ImagePattern(dead);
+	static ImagePattern ip_dead2 = new ImagePattern(dead2);
 }
 
 class control{
