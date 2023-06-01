@@ -20,19 +20,21 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import project.sound.Sounds;
-import javafx.scene.effect.Bloom;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 
 public class project extends Application{
 	
 	@Override
 	
 	public void start(Stage primaryStage) {
+
 		//create a pane
 		Pane pane=new Pane();
+
+		//判斷死亡聲音不要重複播放
 		Flag.dead_sound = false;
+
+		//右下角是否播放背景音樂
 		sound.playloop(Sounds.BGM);
 		Rectangle music=new Rectangle(570, 470, 25, 25);
 		Image volume = new Image("/project/resources/image/volume.png");
@@ -40,7 +42,6 @@ public class project extends Application{
 		Image mute = new Image("/project/resources/image/mute.png");
 		ImagePattern iv_mute = new ImagePattern(mute);
 		music.setFill(iv_volume);
-
 		music.setOnMouseClicked(e->{
 			if(music.getFill()==iv_volume)
 			{
@@ -57,6 +58,7 @@ public class project extends Application{
 
 		});
 
+		//背景顏色切換
 		ColorAdjust colorAdjust=new ColorAdjust();
 
 		//背景
@@ -67,6 +69,7 @@ public class project extends Application{
 		pane.getChildren().add(iv_background);
 		iv_background.setEffect(colorAdjust);
 		
+		//顏色庫
 		Color red = Color.MINTCREAM;
 		Color orange = Color.ORANGE;
 		Color yellow = Color.YELLOW;
@@ -79,7 +82,7 @@ public class project extends Application{
 		Color silver = Color.SILVER;
 		Color skyblue = Color.SKYBLUE; 
 
-        //天花板尖刺和尖刺板子(還改了整體視窗x變成400、板子減少一個放成尖刺、板子的y間距)
+        //天花板尖刺和尖刺板子
 		Image Ceiling = new Image("/project/resources/image/Ceiling.png");
 		Image Nails = new Image("/project/resources/image/Nails.png");
 		ImageView iv_ceiling = new ImageView(Ceiling);
@@ -120,7 +123,6 @@ public class project extends Application{
 
 		//字體
 		//Cubic_11_1.010_R.ttf
-		//setofont.ttf
 		Font font = Font.loadFont("file:src/project/resources/fonts/Cubic_11_1.010_R.ttf", 15);
 		Font font2 = Font.loadFont("file:src/project/resources/fonts/Cubic_11_1.010_R.ttf", 30);
 		title.setFont(font2);
@@ -136,7 +138,8 @@ public class project extends Application{
 		t_toplayer.setFont(font);
 
 		pane.getChildren().addAll(r_info,r_start,title,t_layer,t_start,rule,t_toplayer, music);
-		//讓層數資料更新
+
+		//讓層數資料更新，隨層數切換顏色
 		Timeline changeinfo=new Timeline(new
 				KeyFrame(Duration.millis(100),e->{
 					switch((Layer.layer/11)%11)
@@ -206,15 +209,15 @@ public class project extends Application{
 		//create n rectangles
 		int n=10;
 		Rectangle [] rs=new Rectangle[n+1];
-		Rectangle start=new Rectangle(80,500d/11,60,10);//1250d/11 210
+		Rectangle start=new Rectangle(80,500d/11,60,10);
 		Image Wood = new Image("/project/resources/image/wood.jpg");
 		ImagePattern ip_normal = new ImagePattern(Wood);
 		start.setFill(ip_normal);
 		rs[0]=start;
 		pane.getChildren().add(start);
 		for(int i=1;i<n;i++) {
-			Rectangle r=new Rectangle((int)(Math.random()*340),500d/11*(i+1),60,10);//0<=x<=420, 0<=y<=500
-			if(i==3) {//一開始圓在的固定板子
+			Rectangle r=new Rectangle((int)(Math.random()*340),500d/11*(i+1),60,10);
+			if(i==3) {//一開始松鼠在的固定板子
 				r.setX(80);
 			}
 			r.setFill(ip_normal);
@@ -228,7 +231,6 @@ public class project extends Application{
 
 		/*在3,4,5層數會把指定板子變尖刺*/
 		EventHandler <ActionEvent> thirdhandler= (e ->{
-			//int i = (int)(Math.random()*10);
 			if(Layer.layer>=44 && rs[3].getY()==500) {
 				rs[3].setFill(ip_nails);
 			}
@@ -250,7 +252,7 @@ public class project extends Application{
 			r_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
 			if(Flag.first_start) {
-				for(int i=0;i<n+1;i++) {  //連續按會加快速度
+				for(int i=0;i<n+1;i++) {
 					moveRectangle(rs[i],r_squirrel);
 				}
 				pane.getChildren().addAll(r_button,t_restart,t_pause);
@@ -272,8 +274,6 @@ public class project extends Application{
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
 			Flag.dead_sound = false;
-			//colorAdjust.setHue(hue0);		
-			//pane.getChildren().add(iv_squirrel);
 			if(r_start.getParent()==null) {//讓遊戲進行中或暫停時能按restart
 				pane.getChildren().add(r_start);
 				pane.getChildren().add(t_pause);
@@ -287,6 +287,7 @@ public class project extends Application{
 			
 			r_squirrel.setLayoutX(90);			
 			r_squirrel.setLayoutY(2000d/11-30);
+
 			for(int i=0;i<n+1;i++) {
 				rs[i].setY(500d/11*(i+1));
 				if(i==10) {
@@ -303,7 +304,7 @@ public class project extends Application{
 				}
 			}
 
-			Layer.layer=0;//重設layer為
+			Layer.layer=0;//重設layer為0
 			registerKeyboardEventHandler(r_squirrel);
 			r_squirrel.requestFocus();
 			r_squirrel.setFill(role.ip_squirrel_stop);
@@ -314,14 +315,14 @@ public class project extends Application{
 		//add to pane
 		pane.getChildren().add(r_squirrel);
 	
-		//create a handler 讓球碰到板子不會掉下去
+		//create a handler 讓松鼠碰到板子不會掉下去
 		EventHandler <ActionEvent> eventhandler= (e ->{
 			
 			Flag.touchGround=false;
 			int index=0;
 			if(!Flag.pause) {
 				for(int i=0;i<n+1;i++) {
-				//球碰到地板
+				//松鼠碰到地板
 					if((r_squirrel.getLayoutX()>=rs[i].getX()-20 && r_squirrel.getLayoutX()<=rs[i].getX()+rs[i].getWidth()-20)
 						&& r_squirrel.getLayoutY()>=rs[i].getY()-30 && r_squirrel.getLayoutY()<=rs[i].getY()-30+1) {
 						Flag.touchGround=true;
@@ -330,7 +331,6 @@ public class project extends Application{
 				}
 				
 				if(r_squirrel.getLayoutY()>=490 || r_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
-					//pane.getChildren().remove(iv_squirrel);
 					if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 					else r_squirrel.setFill(role.ip_dead2);
 					if(Flag.dead_sound==false)
@@ -341,11 +341,9 @@ public class project extends Application{
 					Flag.stop=true;
 					pane.getChildren().remove(t_pause);
 					pane.getChildren().remove(r_start);
-					//gameOver(pane,c);
 				}
 				else if(Flag.touchGround) {//碰到尖刺松鼠不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
-						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
 						if(Flag.dead_sound==false)
@@ -353,13 +351,11 @@ public class project extends Application{
 							sound.play(Sounds.UHHH);
 							Flag.dead_sound=true;
 						}
-						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
 					}
 					else if(rs[1].getFill().equals(ip_nails) && index==1 ) {
-						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
 						if(Flag.dead_sound==false)
@@ -367,15 +363,11 @@ public class project extends Application{
 							sound.play(Sounds.UHHH);
 							Flag.dead_sound=true;
 						}
-						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
-						//Heart.number=Heart.number-1;
-						//System.out.println(Heart.number);
 					}
 					else if(rs[7].getFill().equals(ip_nails) && index==7 ) {
-						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
 						if(Flag.dead_sound==false)
@@ -383,15 +375,11 @@ public class project extends Application{
 							sound.play(Sounds.UHHH);
 							Flag.dead_sound=true;
 						}						
-						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
-						//Heart.number=Heart.number-1;
-						//System.out.println(Heart.number);
 					}
 					else if(rs[3].getFill().equals(ip_nails) && index==3 ) {
-						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
 						if(Flag.dead_sound==false)
@@ -399,12 +387,9 @@ public class project extends Application{
 							sound.play(Sounds.UHHH);
 							Flag.dead_sound=true;
 						}						
-						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
 						pane.getChildren().remove(r_start);
-						//Heart.number=Heart.number-1;
-						//System.out.println(Heart.number);
 		        	}
 					
 				}
@@ -444,16 +429,6 @@ public class project extends Application{
 	    c.setOnKeyPressed(e -> {
 	    	if((!Flag.pause) && (!Flag.stop)) {
 		        switch (e.getCode()) {
-		            // case W:
-					// 	c.setImage(role.iv_squirrel_stop.getImage());
-		            //     c.setLayoutY(c.getLayoutY() - 10);
-		            //     break;
-		            // case S:
-					// 	if(!Flag.touchGround)
-					// 	{
-		            //     	c.setLayoutY(c.getLayoutY() + 10);
-					// 	}
-		            //     break;
 		            case D:
 						c.setFill(role.ip_squirrel_run2);
 		                // Make sure the circle doesn't go beyond the right side of the screen
@@ -491,7 +466,6 @@ public class project extends Application{
 		
 		EventHandler <ActionEvent> handler= (e ->{
 			boolean moveWithRectangle=false;
-			//Floor f=new Floor();
 			if (c.getLayoutX()>=r.getX()-20 && c.getLayoutX()<=r.getX()+r.getWidth()-20
 				&& c.getLayoutY()>=r.getY()-30 && c.getLayoutY()<=r.getY()-30+1) {
 				moveWithRectangle = true;
@@ -500,7 +474,6 @@ public class project extends Application{
 			if(c.getLayoutY()>=490 || c.getLayoutY()<=10 || Flag.pause || Flag.stop) {
 				//do nothing 圓掉到最下面或碰到頂部而停止
 			}else if (moveWithRectangle) {
-	            //r.setY(c.getCenterY() - 25);
 	        	r.setY(r.getY() - 1);
 	        	c.setLayoutY(c.getLayoutY()-1);
 	        } else if (r.getY() >= 0) {
@@ -512,11 +485,7 @@ public class project extends Application{
 	            moveWithRectangle = false;
 				if(Layer.toplayer == Layer.layer) Layer.toplayer++;
 	            Layer.layer++;
-	            //f.add_time();
 	        }
-			/*if(f.getAppearTime()==10){
-				
-			}*/
 			
 		});
 		
@@ -544,47 +513,13 @@ public class project extends Application{
 		speedUP.play();
 	}
 
-	//遊戲結束(沒用到)
-	public static void gameOver(Pane pane,Circle c) {
-		//Circle c= new Circle(250,250,25);
-		Rectangle r=new Rectangle(150,150,200,200);
-		r.setFill(Color.BLUE);
-		r.setStroke(Color.BLACK);
-		pane.getChildren().add(r);
-		Button bt=new Button("play again");
-		pane.getChildren().add(bt);
-		bt.setOnMouseClicked(e->{
-			pane.getChildren().remove(r);
-			c.setCenterX(100);
-			c.setCenterY(50);
-			pane.getChildren().remove(bt);
-		});
-		bt.requestFocus();
-		//pane.getChildren().add(c);
-	}
-
-	//重新開始
-	public static void restart(Pane pane) {
-	}
-
+	//顏色效果
 	public static double map(double value, double start, double stop, double targetStart, double targetStop) {
         return targetStart + (targetStop - targetStart) * ((value - start) / (stop - start));
    }
 
 	public static void main(String[] args) {
 		launch(args);
-	}
-}
-
-//繼承矩形(沒用到)
-class Floor extends Rectangle{
-	private int appear_time=0;
-	
-	public void add_time() {
-		appear_time++;
-	}
-	public int getAppearTime() {
-		return appear_time;
 	}
 }
 
@@ -610,22 +545,11 @@ class role{
 	static ImagePattern ip_dead2 = new ImagePattern(dead2);
 }
 
+//其他全域變數
 class Flag{
 	static boolean touchGround = false;
 	static boolean stop=false;
 	static boolean pause;
 	static boolean first_start;
 	static boolean dead_sound;
-}
-
-//血條(目前沒用到)
-class Heart{
-	static int number=3;
-	
-	public int getHeartNumber() {
-		return number;
-	}
-	public void getHurt() {
-		number--;
-	}
 }
