@@ -12,8 +12,9 @@ public class sound {
     
     public enum Sounds {
         
-        BGM(sound.class.getResource("/project/resources/music/Background Music.wav"));
-        
+        BGM(sound.class.getResource("/project/resources/music/Background Music.wav")),
+        UHHH(sound.class.getResource("/project/resources/music/uhhh.wav"));
+
         private URL path;
         private Clip loopClip;
 

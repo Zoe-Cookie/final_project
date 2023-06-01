@@ -20,7 +20,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import project.sound.Sounds;
+import javafx.scene.effect.Bloom;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 
 public class project extends Application{
 	
@@ -29,7 +32,7 @@ public class project extends Application{
 	public void start(Stage primaryStage) {
 		//create a pane
 		Pane pane=new Pane();
-
+		Flag.dead_sound = false;
 		sound.playloop(Sounds.BGM);
 		Rectangle music=new Rectangle(570, 470, 25, 25);
 		Image volume = new Image("/project/resources/image/volume.png");
@@ -241,8 +244,8 @@ public class project extends Application{
 		difficulties.setCycleCount(Timeline.INDEFINITE);
 		difficulties.play();
 		Flag.first_start=true;
+
 		t_start.setOnMouseClicked(e->{//按到start開始遊戲
-			
 			registerKeyboardEventHandler(r_squirrel);//上下左右改成函數
 			r_squirrel.requestFocus();
 			pane.getChildren().remove(t_start);
@@ -268,6 +271,7 @@ public class project extends Application{
 		});
 		
 		t_restart.setOnMouseClicked(e->{//按到restart重新開始
+			Flag.dead_sound = false;
 			//colorAdjust.setHue(hue0);		
 			//pane.getChildren().add(iv_squirrel);
 			if(r_start.getParent()==null) {//讓遊戲進行中或暫停時能按restart
@@ -312,6 +316,7 @@ public class project extends Application{
 	
 		//create a handler 讓球碰到板子不會掉下去
 		EventHandler <ActionEvent> eventhandler= (e ->{
+			
 			Flag.touchGround=false;
 			int index=0;
 			if(!Flag.pause) {
@@ -326,17 +331,28 @@ public class project extends Application{
 				
 				if(r_squirrel.getLayoutY()>=490 || r_squirrel.getLayoutY()<=10 ) {//掉到最下面或碰到頂部失敗
 					//pane.getChildren().remove(iv_squirrel);
-					r_squirrel.setFill(role.ip_dead);
+					if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
+					else r_squirrel.setFill(role.ip_dead2);
+					if(Flag.dead_sound==false)
+					{
+						sound.play(Sounds.UHHH);
+						Flag.dead_sound=true;
+					}
 					Flag.stop=true;
 					pane.getChildren().remove(t_pause);
 					pane.getChildren().remove(r_start);
 					//gameOver(pane,c);
 				}
-				else if(Flag.touchGround) {//碰到尖刺球不見
+				else if(Flag.touchGround) {//碰到尖刺松鼠不見
 					if(rs[10].getFill().equals(ip_nails) && index==10 ) {
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
+						if(Flag.dead_sound==false)
+						{
+							sound.play(Sounds.UHHH);
+							Flag.dead_sound=true;
+						}
 						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
@@ -346,6 +362,11 @@ public class project extends Application{
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
+						if(Flag.dead_sound==false)
+						{
+							sound.play(Sounds.UHHH);
+							Flag.dead_sound=true;
+						}
 						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
@@ -357,6 +378,11 @@ public class project extends Application{
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
+						if(Flag.dead_sound==false)
+						{
+							sound.play(Sounds.UHHH);
+							Flag.dead_sound=true;
+						}						
 						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
@@ -368,6 +394,11 @@ public class project extends Application{
 						//pane.getChildren().remove(iv_squirrel);
 						if(r_squirrel.getFill()==role.ip_squirrel_stop||r_squirrel.getFill()==role.ip_squirrel_run) r_squirrel.setFill(role.ip_dead);
 						else r_squirrel.setFill(role.ip_dead2);
+						if(Flag.dead_sound==false)
+						{
+							sound.play(Sounds.UHHH);
+							Flag.dead_sound=true;
+						}						
 						//r_squirrel.setLayoutY(0);
 						Flag.stop=true;
 						pane.getChildren().remove(t_pause);
@@ -378,7 +409,7 @@ public class project extends Application{
 					
 				}
 				else if(!Flag.touchGround ) {
-					r_squirrel.setLayoutY(r_squirrel.getLayoutY()+0.1);
+					r_squirrel.setLayoutY(r_squirrel.getLayoutY()+0.2);
 				}
 				else {
 					r_squirrel.setLayoutY(rs[index].getY() - 30);
@@ -417,12 +448,12 @@ public class project extends Application{
 					// 	c.setImage(role.iv_squirrel_stop.getImage());
 		            //     c.setLayoutY(c.getLayoutY() - 10);
 		            //     break;
-		            case S:
-						if(!Flag.touchGround)
-						{
-		                	c.setLayoutY(c.getLayoutY() + 10);
-						}
-		                break;
+		            // case S:
+					// 	if(!Flag.touchGround)
+					// 	{
+		            //     	c.setLayoutY(c.getLayoutY() + 10);
+					// 	}
+		            //     break;
 		            case D:
 						c.setFill(role.ip_squirrel_run2);
 		                // Make sure the circle doesn't go beyond the right side of the screen
@@ -584,6 +615,7 @@ class Flag{
 	static boolean stop=false;
 	static boolean pause;
 	static boolean first_start;
+	static boolean dead_sound;
 }
 
 //血條(目前沒用到)
